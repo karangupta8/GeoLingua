@@ -170,7 +170,10 @@ function GlobeGeometry({ countryData, hoveredCountry, setHoveredCountry }: {
         // Create gradient for smooth blending
         const gradient = context.createRadialGradient(x, y, 0, x, y, radius);
         gradient.addColorStop(0, country.color);
-        gradient.addColorStop(0.7, country.color + '80'); // Semi-transparent
+        
+        // Convert HSL to HSLA for transparency
+        const semiTransparentColor = country.color.replace('hsl(', 'hsla(').replace(')', ', 0.5)');
+        gradient.addColorStop(0.7, semiTransparentColor);
         gradient.addColorStop(1, 'transparent');
         
         context.fillStyle = gradient;
