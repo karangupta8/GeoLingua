@@ -1,10 +1,12 @@
-import React from 'react';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
+import React, { useState, useEffect } from 'react';
+import { Search, X, Globe2, Users, MapPin, Loader2, RefreshCw } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { languages, LanguageData } from '@/data/languages';
-import { Search, X, Globe, Users } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useLanguages } from '@/hooks/useLanguages';
+import { LanguageData } from '@/data/languages';
 
 interface LanguageSelectorProps {
   selectedLanguages: string[];
@@ -13,13 +15,23 @@ interface LanguageSelectorProps {
 
 const LanguageSelector: React.FC<LanguageSelectorProps> = ({
   selectedLanguages,
-  onLanguageToggle,
+  onLanguageToggle
 }) => {
-  const [searchTerm, setSearchTerm] = React.useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterBy, setFilterBy] = useState<'all' | 'popular' | 'official'>('all');
+  const { languages, isLoading, error, refetch } = useLanguages();
 
-  const filteredLanguages = languages.filter(lang =>
-    lang.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredLanguages = languages.filter(language => {
+    const matchesSearch = language.name.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    if (filterBy === 'popular') {
+      return matchesSearch && language.totalSpeakers > 300000000;
+    } else if (filterBy === 'official') {
+      return matchesSearch && language.officialCountries > 10;
+    }
+    
+    return matchesSearch;
+  });
 
   const formatNumber = (num: number) => {
     if (num >= 1000000000) return `${(num / 1000000000).toFixed(1)}B`;
@@ -28,34 +40,79 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
     return num.toString();
   };
 
+  if (isLoading) {
+    return (
+      <Card className="sticky top-4 shadow-card-custom">
+        <CardContent className="p-8 text-center">
+          <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-primary" />
+          <p className="text-muted-foreground">Loading languages...</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (error) {
+    return (
+      <Card className="sticky top-4 shadow-card-custom">
+        <CardContent className="p-8 text-center">
+          <div className="space-y-4">
+            <p className="text-destructive">{error}</p>
+            <Button onClick={refetch} variant="outline" size="sm">
+              <RefreshCw className="w-4 h-4 mr-2" />
+              Retry
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
-    <Card className="p-6 bg-card shadow-card-custom">
-      <div className="space-y-6">
+    <Card className="sticky top-4 shadow-card-custom">
+      <CardHeader className="space-y-4">
         <div>
-          <h2 className="text-2xl font-bold text-foreground mb-2">Select Languages</h2>
-          <p className="text-muted-foreground">Choose the languages you speak or are learning</p>
+          <CardTitle className="flex items-center space-x-2">
+            <Globe2 className="w-5 h-5 text-primary" />
+            <span>Select Languages</span>
+          </CardTitle>
+          <CardDescription>
+            Choose the languages you speak or are learning
+          </CardDescription>
         </div>
 
-        {/* Search Input */}
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-          <Input
-            placeholder="Search languages..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
-          />
+        {/* Search and Filter */}
+        <div className="space-y-3">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+            <Input
+              placeholder="Search languages..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+          
+          <Select value={filterBy} onValueChange={(value: 'all' | 'popular' | 'official') => setFilterBy(value)}>
+            <SelectTrigger>
+              <SelectValue placeholder="Filter languages" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Languages</SelectItem>
+              <SelectItem value="popular">Popular (300M+ speakers)</SelectItem>
+              <SelectItem value="official">Widely Official (10+ countries)</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         {/* Selected Languages */}
         {selectedLanguages.length > 0 && (
           <div className="space-y-3">
-            <h3 className="font-semibold text-foreground">Selected Languages</h3>
+            <h4 className="font-medium text-sm text-muted-foreground">Selected Languages</h4>
             <div className="flex flex-wrap gap-2">
               {selectedLanguages.map(langId => {
                 const language = languages.find(l => l.id === langId);
                 if (!language) return null;
-                
+
                 return (
                   <Badge
                     key={langId}
@@ -77,61 +134,60 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
             </div>
           </div>
         )}
+      </CardHeader>
 
-        {/* Available Languages */}
-        <div className="space-y-3">
-          <h3 className="font-semibold text-foreground">Available Languages</h3>
-          <div className="grid gap-3">
-            {filteredLanguages.map((language: LanguageData) => {
-              const isSelected = selectedLanguages.includes(language.id);
-              
-              return (
-                <div
-                  key={language.id}
-                  className={`
-                    p-4 rounded-lg border-2 cursor-pointer transition-all duration-300
-                    ${isSelected 
-                      ? 'border-primary bg-primary/5 shadow-language' 
-                      : 'border-border hover:border-primary/50 hover:bg-primary/5'
-                    }
-                  `}
-                  onClick={() => onLanguageToggle(language.id)}
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                      <div 
-                        className={`w-4 h-4 rounded-full bg-${language.color}`}
-                        style={{ backgroundColor: `hsl(var(--${language.color}))` }}
-                      />
-                      <div>
-                        <h4 className="font-semibold text-foreground">{language.name}</h4>
-                        <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-                          <div className="flex items-center space-x-1">
-                            <Users className="w-3 h-3" />
-                            <span>{formatNumber(language.totalSpeakers)} speakers</span>
-                          </div>
-                          <div className="flex items-center space-x-1">
-                            <Globe className="w-3 h-3" />
-                            <span>{language.officialCountries} countries</span>
-                          </div>
+      <CardContent className="space-y-4">
+        <h4 className="font-medium text-sm text-muted-foreground">Available Languages</h4>
+        <div className="space-y-3 max-h-96 overflow-y-auto">
+          {filteredLanguages.map((language: LanguageData) => {
+            const isSelected = selectedLanguages.includes(language.id);
+
+            return (
+              <div
+                key={language.id}
+                className={`
+                  p-4 rounded-lg border-2 cursor-pointer transition-all duration-300 hover-scale
+                  ${isSelected 
+                    ? 'border-primary bg-primary/5 shadow-card-custom' 
+                    : 'border-border hover:border-primary/50 hover:bg-primary/5'
+                  }
+                `}
+                onClick={() => onLanguageToggle(language.id)}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div 
+                      className={`w-4 h-4 rounded-full bg-${language.color}`}
+                      style={{ backgroundColor: `hsl(var(--${language.color}))` }}
+                    />
+                    <div>
+                      <h4 className="font-semibold text-foreground">{language.name}</h4>
+                      <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+                        <div className="flex items-center space-x-1">
+                          <Users className="w-3 h-3" />
+                          <span>{formatNumber(language.totalSpeakers)} speakers</span>
+                        </div>
+                        <div className="flex items-center space-x-1">
+                          <MapPin className="w-3 h-3" />
+                          <span>{language.officialCountries} countries</span>
                         </div>
                       </div>
                     </div>
-                    <div className="text-right">
-                      <div className="text-sm font-semibold text-foreground">
-                        {language.globalCoverage}%
-                      </div>
-                      <div className="text-xs text-muted-foreground">
-                        global reach
-                      </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-sm font-semibold text-foreground">
+                      {language.globalCoverage}%
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      global reach
                     </div>
                   </div>
                 </div>
-              );
-            })}
-          </div>
+              </div>
+            );
+          })}
         </div>
-      </div>
+      </CardContent>
     </Card>
   );
 };

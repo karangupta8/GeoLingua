@@ -5,6 +5,7 @@ import StatsDashboard from '@/components/StatsDashboard';
 import WorldMap from '@/components/WorldMap';
 import CountryBreakdown from '@/components/CountryBreakdown';
 import { Globe, BarChart3, Map, Users } from 'lucide-react';
+import Globe3D from '@/components/Globe3D';
 
 const Index = () => {
   const [selectedLanguages, setSelectedLanguages] = React.useState<string[]>([]);
@@ -76,7 +77,7 @@ const Index = () => {
               </TabsContent>
 
               <TabsContent value="map" className="space-y-6">
-                <WorldMap selectedLanguages={selectedLanguages} />
+                <Globe3D selectedLanguages={selectedLanguages} />
               </TabsContent>
 
               <TabsContent value="countries" className="space-y-6">
@@ -86,7 +87,7 @@ const Index = () => {
               <TabsContent value="insights" className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <StatsDashboard selectedLanguages={selectedLanguages} />
-                  <WorldMap selectedLanguages={selectedLanguages} />
+                  <Globe3D selectedLanguages={selectedLanguages} />
                 </div>
               </TabsContent>
             </Tabs>
