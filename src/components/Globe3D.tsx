@@ -273,9 +273,10 @@ function RealisticGlobe({ countryData, hoveredCountry, setHoveredCountry }: {
         
         const color = getCountryColor(intensity, true);
         const rgbColor = `rgb(${Math.floor(color.r * 255)}, ${Math.floor(color.g * 255)}, ${Math.floor(color.b * 255)})`;
+        const rgbaColor = `rgba(${Math.floor(color.r * 255)}, ${Math.floor(color.g * 255)}, ${Math.floor(color.b * 255)}, 0.5)`;
         
         gradient.addColorStop(0, rgbColor);
-        gradient.addColorStop(0.7, `${rgbColor}88`); // Semi-transparent
+        gradient.addColorStop(0.7, rgbaColor); // Semi-transparent using RGBA
         gradient.addColorStop(1, 'transparent');
         
         context.globalCompositeOperation = 'overlay';
