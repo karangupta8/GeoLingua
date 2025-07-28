@@ -71,46 +71,6 @@ const latLngToVector3 = (lat: number, lng: number, radius: number = 2): THREE.Ve
   return new THREE.Vector3(x, y, z);
 };
 
-// Create realistic Earth atmosphere shader material
-const AtmosphereMaterial = shaderMaterial(
-  {
-    glowColor: new THREE.Color(0x00aaff),
-    falloff: 0.1,
-    glowMultiplier: 1.0,
-  },
-  // Vertex shader
-  `
-    varying vec3 vNormal;
-    void main() {
-      vNormal = normalize(normalMatrix * normal);
-      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-    }
-  `,
-  // Fragment shader
-  `
-    varying vec3 vNormal;
-    uniform vec3 glowColor;
-    uniform float falloff;
-    uniform float glowMultiplier;
-    
-    void main() {
-      float intensity = pow(falloff - dot(vNormal, vec3(0.0, 0.0, 1.0)), glowMultiplier);
-      gl_FragColor = vec4(glowColor, intensity);
-    }
-  `
-);
-
-extend({ AtmosphereMaterial });
-
-// Declare the custom material for TypeScript
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      atmosphereMaterial: any;
-    }
-  }
-}
-
 // Generate realistic Earth colors for countries
 const getCountryColor = (intensity: number, hasLanguage: boolean): THREE.Color => {
   if (!hasLanguage) {
@@ -354,14 +314,14 @@ function RealisticGlobe({ countryData, hoveredCountry, setHoveredCountry }: {
         />
       </mesh>
 
-      {/* Atmospheric glow */}
+      {/* Atmospheric glow - simplified using standard material */}
       <mesh ref={atmosphereRef} scale={[1.05, 1.05, 1.05]}>
         <sphereGeometry args={[2, 64, 32]} />
-        <atmosphereMaterial 
+        <meshBasicMaterial 
+          color={0x4dd0e7}
           transparent
-          glowColor={new THREE.Color(0x4dd0e7)}
-          falloff={0.2}
-          glowMultiplier={3.0}
+          opacity={0.15}
+          side={THREE.BackSide}
         />
       </mesh>
 
