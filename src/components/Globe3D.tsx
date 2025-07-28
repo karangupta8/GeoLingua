@@ -1,11 +1,12 @@
 import React, { useRef, useMemo, useState, useEffect } from 'react';
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { OrbitControls, Text } from '@react-three/drei';
+import { Canvas, useFrame, useThree, useLoader } from '@react-three/fiber';
+import { OrbitControls, Sphere, shaderMaterial } from '@react-three/drei';
 import * as THREE from 'three';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { LanguageData } from '@/data/languages';
 import { languageService } from '@/services/languageService';
+import { extend } from '@react-three/fiber';
 
 interface Globe3DProps {
   selectedLanguages: string[];
@@ -70,116 +71,219 @@ const latLngToVector3 = (lat: number, lng: number, radius: number = 2): THREE.Ve
   return new THREE.Vector3(x, y, z);
 };
 
-// Generate heatmap color based on coverage intensity
-const getHeatmapColor = (intensity: number, hasLanguage: boolean): string => {
-  if (!hasLanguage) return 'hsl(220, 20%, 30%)'; // Dark blue-gray for unselected
-  
-  // Blue to cyan gradient for coverage intensity
-  const hue = 200 + intensity * 60; // 200 (blue) to 260 (cyan)
-  const saturation = 70 + intensity * 20; // 70% to 90%
-  const lightness = 40 + intensity * 30; // 40% to 70%
-  
-  return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
-};
-
-function CountryMarker({ country, isHovered, onHover, onLeave }: {
-  country: CountryData;
-  isHovered: boolean;
-  onHover: () => void;
-  onLeave: () => void;
-}) {
-  const position = latLngToVector3(country.lat, country.lng, 2.05);
-  const markerRef = useRef<THREE.Mesh>(null);
-  
-  useFrame(() => {
-    if (markerRef.current && isHovered) {
-      markerRef.current.scale.setScalar(1 + Math.sin(Date.now() * 0.008) * 0.1);
-    } else if (markerRef.current) {
-      markerRef.current.scale.setScalar(1);
+// Create realistic Earth atmosphere shader material
+const AtmosphereMaterial = shaderMaterial(
+  {
+    glowColor: new THREE.Color(0x00aaff),
+    falloff: 0.1,
+    glowMultiplier: 1.0,
+  },
+  // Vertex shader
+  `
+    varying vec3 vNormal;
+    void main() {
+      vNormal = normalize(normalMatrix * normal);
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
     }
-  });
+  `,
+  // Fragment shader
+  `
+    varying vec3 vNormal;
+    uniform vec3 glowColor;
+    uniform float falloff;
+    uniform float glowMultiplier;
+    
+    void main() {
+      float intensity = pow(falloff - dot(vNormal, vec3(0.0, 0.0, 1.0)), glowMultiplier);
+      gl_FragColor = vec4(glowColor, intensity);
+    }
+  `
+);
 
-  const intensity = country.speakerPercentage / 100;
-  const size = 0.03 + intensity * 0.07;
+extend({ AtmosphereMaterial });
 
-  return (
-    <group>
-      <mesh
-        ref={markerRef}
-        position={position}
-        onPointerOver={onHover}
-        onPointerOut={onLeave}
-      >
-        <sphereGeometry args={[size, 8, 8]} />
-        <meshStandardMaterial 
-          color={country.color}
-          emissive={isHovered ? country.color : '#000000'}
-          emissiveIntensity={isHovered ? 0.4 : 0}
-        />
-      </mesh>
-      
-      {isHovered && (
-        <Text
-          position={[position.x + 0.2, position.y + 0.2, position.z]}
-          fontSize={0.12}
-          color="white"
-          anchorX="left"
-          anchorY="middle"
-        >
-          {country.name}
-        </Text>
-      )}
-    </group>
-  );
+// Declare the custom material for TypeScript
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      atmosphereMaterial: any;
+    }
+  }
 }
 
-function GlobeGeometry({ countryData, hoveredCountry, setHoveredCountry }: {
+// Generate realistic Earth colors for countries
+const getCountryColor = (intensity: number, hasLanguage: boolean): THREE.Color => {
+  if (!hasLanguage) {
+    return new THREE.Color(0x2d5a27); // Forest green for land without selected languages
+  }
+  
+  // Gradient from green to bright yellow-orange for language coverage
+  const hue = (1 - intensity) * 0.33; // Green (0.33) to Red (0)
+  const saturation = 0.7 + intensity * 0.3;
+  const lightness = 0.4 + intensity * 0.4;
+  
+  return new THREE.Color().setHSL(hue, saturation, lightness);
+};
+
+// Create realistic Earth textures
+const createEarthTexture = () => {
+  const canvas = document.createElement('canvas');
+  canvas.width = 2048;
+  canvas.height = 1024;
+  const context = canvas.getContext('2d')!;
+  
+  // Create Earth-like base texture
+  const gradient = context.createLinearGradient(0, 0, 0, canvas.height);
+  gradient.addColorStop(0, '#87CEEB'); // Sky blue at poles
+  gradient.addColorStop(0.3, '#4682B4'); // Steel blue
+  gradient.addColorStop(0.7, '#228B22'); // Forest green
+  gradient.addColorStop(1, '#87CEEB'); // Sky blue at bottom pole
+  
+  context.fillStyle = gradient;
+  context.fillRect(0, 0, canvas.width, canvas.height);
+  
+  // Add continents (simplified landmasses)
+  context.fillStyle = '#2F4F2F'; // Dark green for land
+  
+  // North America
+  context.fillRect(200, 200, 400, 300);
+  context.fillRect(150, 350, 300, 200);
+  
+  // South America  
+  context.fillRect(400, 600, 200, 400);
+  
+  // Europe/Asia
+  context.fillRect(800, 150, 800, 400);
+  context.fillRect(900, 250, 600, 300);
+  
+  // Africa
+  context.fillRect(900, 450, 300, 500);
+  
+  // Australia
+  context.fillRect(1300, 700, 200, 150);
+  
+  return new THREE.CanvasTexture(canvas);
+};
+
+// Create bump texture for terrain relief
+const createBumpTexture = () => {
+  const canvas = document.createElement('canvas');
+  canvas.width = 1024;
+  canvas.height = 512;
+  const context = canvas.getContext('2d')!;
+  
+  // Create noise pattern for terrain
+  const imageData = context.createImageData(canvas.width, canvas.height);
+  const data = imageData.data;
+  
+  for (let i = 0; i < data.length; i += 4) {
+    const noise = Math.random() * 255;
+    data[i] = noise;     // Red
+    data[i + 1] = noise; // Green  
+    data[i + 2] = noise; // Blue
+    data[i + 3] = 255;   // Alpha
+  }
+  
+  context.putImageData(imageData, 0, 0);
+  return new THREE.CanvasTexture(canvas);
+};
+
+function RealisticGlobe({ countryData, hoveredCountry, setHoveredCountry }: {
   countryData: CountryData[];
   hoveredCountry: string | null;
   setHoveredCountry: (country: string | null) => void;
 }) {
   const globeRef = useRef<THREE.Mesh>(null);
-  const { scene } = useThree();
+  const atmosphereRef = useRef<THREE.Mesh>(null);
+  const [autoRotate, setAutoRotate] = useState(true);
+  const { camera } = useThree();
 
-  useFrame(() => {
-    if (globeRef.current) {
-      globeRef.current.rotation.y += 0.003;
+  // Pause auto-rotation when user interacts
+  const handleInteractionStart = () => setAutoRotate(false);
+  const handleInteractionEnd = () => {
+    setTimeout(() => setAutoRotate(true), 2000);
+  };
+
+  useFrame((state) => {
+    if (globeRef.current && autoRotate) {
+      globeRef.current.rotation.y += 0.002;
+    }
+    
+    // Atmosphere glow effect
+    if (atmosphereRef.current) {
+      atmosphereRef.current.rotation.y += 0.001;
     }
   });
 
-  // Create heatmap texture
-  const heatmapTexture = useMemo(() => {
+  // Create realistic Earth texture with country overlays
+  const earthTexture = useMemo(() => {
     const canvas = document.createElement('canvas');
     canvas.width = 2048;
     canvas.height = 1024;
     const context = canvas.getContext('2d')!;
     
-    // Base ocean color
-    context.fillStyle = 'hsl(220, 20%, 25%)';
+    // Base Earth texture - oceans
+    const oceanGradient = context.createLinearGradient(0, 0, 0, canvas.height);
+    oceanGradient.addColorStop(0, '#1e3a5f'); // Deep ocean blue at top
+    oceanGradient.addColorStop(0.5, '#2563eb'); // Bright ocean blue
+    oceanGradient.addColorStop(1, '#1e3a5f'); // Deep ocean blue at bottom
+    
+    context.fillStyle = oceanGradient;
     context.fillRect(0, 0, canvas.width, canvas.height);
     
-    // Draw country heatmap regions
+    // Draw continents with realistic shapes (simplified)
+    context.fillStyle = '#22c55e'; // Green landmass base
+    
+    // North America (rough shape)
+    context.beginPath();
+    context.ellipse(300, 350, 180, 120, 0, 0, Math.PI * 2);
+    context.fill();
+    
+    // South America
+    context.beginPath();
+    context.ellipse(450, 650, 80, 200, 0, 0, Math.PI * 2);
+    context.fill();
+    
+    // Europe/Asia landmass
+    context.beginPath();
+    context.ellipse(1100, 300, 300, 150, 0, 0, Math.PI * 2);
+    context.fill();
+    
+    // Africa
+    context.beginPath();
+    context.ellipse(1000, 550, 120, 180, 0, 0, Math.PI * 2);
+    context.fill();
+    
+    // Australia
+    context.beginPath();
+    context.ellipse(1400, 750, 80, 50, 0, 0, Math.PI * 2);
+    context.fill();
+    
+    // Overlay country language coverage
     countryData.forEach(country => {
       if (country.languages.length > 0) {
         const x = ((country.lng + 180) / 360) * canvas.width;
         const y = ((90 - country.lat) / 180) * canvas.height;
         
         const intensity = country.speakerPercentage / 100;
-        const radius = 40 + intensity * 60;
+        const radius = 25 + intensity * 35;
         
-        // Create gradient for smooth blending
+        // Create glowing effect for language coverage
         const gradient = context.createRadialGradient(x, y, 0, x, y, radius);
-        gradient.addColorStop(0, country.color);
         
-        // Convert HSL to HSLA for transparency
-        const semiTransparentColor = country.color.replace('hsl(', 'hsla(').replace(')', ', 0.5)');
-        gradient.addColorStop(0.7, semiTransparentColor);
+        const color = getCountryColor(intensity, true);
+        const rgbColor = `rgb(${Math.floor(color.r * 255)}, ${Math.floor(color.g * 255)}, ${Math.floor(color.b * 255)})`;
+        
+        gradient.addColorStop(0, rgbColor);
+        gradient.addColorStop(0.7, `${rgbColor}88`); // Semi-transparent
         gradient.addColorStop(1, 'transparent');
         
+        context.globalCompositeOperation = 'overlay';
         context.fillStyle = gradient;
         context.beginPath();
         context.arc(x, y, radius, 0, Math.PI * 2);
         context.fill();
+        context.globalCompositeOperation = 'source-over';
       }
     });
 
@@ -188,42 +292,80 @@ function GlobeGeometry({ countryData, hoveredCountry, setHoveredCountry }: {
     return texture;
   }, [countryData]);
 
+  const bumpTexture = useMemo(() => createBumpTexture(), []);
+
+  // Country markers as subtle surface indicators
+  const countryMarkers = countryData
+    .filter(country => country.languages.length > 0)
+    .map((country) => {
+      const position = latLngToVector3(country.lat, country.lng, 2.01);
+      const isHovered = hoveredCountry === country.code;
+      const intensity = country.speakerPercentage / 100;
+      
+      return (
+        <group key={country.code}>
+          <mesh
+            position={position}
+            onPointerOver={() => setHoveredCountry(country.code)}
+            onPointerOut={() => setHoveredCountry(null)}
+          >
+            <sphereGeometry args={[0.02 + intensity * 0.03, 8, 8]} />
+            <meshStandardMaterial 
+              color={getCountryColor(intensity, true)}
+              emissive={getCountryColor(intensity, true)}
+              emissiveIntensity={isHovered ? 0.6 : 0.2}
+              transparent
+              opacity={isHovered ? 1.0 : 0.8}
+            />
+          </mesh>
+          
+          {/* Pulsing ring effect for hovered countries */}
+          {isHovered && (
+            <mesh position={position}>
+              <ringGeometry args={[0.08, 0.12, 16]} />
+              <meshBasicMaterial 
+                color={getCountryColor(intensity, true)}
+                transparent
+                opacity={0.5}
+                side={THREE.DoubleSide}
+              />
+            </mesh>
+          )}
+        </group>
+      );
+    });
+
   return (
     <group>
-      {/* Globe with heatmap texture */}
-      <mesh ref={globeRef}>
+      {/* Main Earth sphere */}
+      <mesh 
+        ref={globeRef}
+        onPointerDown={handleInteractionStart}
+        onPointerUp={handleInteractionEnd}
+      >
         <sphereGeometry args={[2, 128, 64]} />
         <meshStandardMaterial 
-          map={heatmapTexture}
-          transparent={false}
-          roughness={0.8}
+          map={earthTexture}
+          bumpMap={bumpTexture}
+          bumpScale={0.05}
+          roughness={0.9}
           metalness={0.1}
         />
       </mesh>
 
-      {/* Country boundary wireframe overlay */}
-      <mesh>
-        <sphereGeometry args={[2.002, 64, 32]} />
-        <meshBasicMaterial 
-          color="hsl(220, 30%, 60%)"
+      {/* Atmospheric glow */}
+      <mesh ref={atmosphereRef} scale={[1.05, 1.05, 1.05]}>
+        <sphereGeometry args={[2, 64, 32]} />
+        <atmosphereMaterial 
           transparent
-          opacity={0.1}
-          wireframe
+          glowColor={new THREE.Color(0x4dd0e7)}
+          falloff={0.2}
+          glowMultiplier={3.0}
         />
       </mesh>
 
-      {/* Interactive country markers */}
-      {countryData
-        .filter(country => country.languages.length > 0)
-        .map((country) => (
-          <CountryMarker
-            key={country.code}
-            country={country}
-            isHovered={hoveredCountry === country.code}
-            onHover={() => setHoveredCountry(country.code)}
-            onLeave={() => setHoveredCountry(null)}
-          />
-        ))}
+      {/* Country markers */}
+      {countryMarkers}
     </group>
   );
 }
@@ -258,7 +400,7 @@ const Globe3D: React.FC<Globe3DProps> = ({ selectedLanguages }) => {
                 speakerPercentage: 0,
                 isOfficial: false,
                 languages: [],
-                color: getHeatmapColor(0, false)
+                color: `rgb(${Math.floor(getCountryColor(0, false).r * 255)}, ${Math.floor(getCountryColor(0, false).g * 255)}, ${Math.floor(getCountryColor(0, false).b * 255)})`
               });
             }
 
@@ -270,7 +412,7 @@ const Globe3D: React.FC<Globe3DProps> = ({ selectedLanguages }) => {
               
               // Update color based on coverage
               const intensity = countryData.speakerPercentage / 100;
-              countryData.color = getHeatmapColor(intensity, true);
+              countryData.color = `rgb(${Math.floor(getCountryColor(intensity, true).r * 255)}, ${Math.floor(getCountryColor(intensity, true).g * 255)}, ${Math.floor(getCountryColor(intensity, true).b * 255)})`;
             }
           });
         });
@@ -310,12 +452,31 @@ const Globe3D: React.FC<Globe3DProps> = ({ selectedLanguages }) => {
     <div className="space-y-4">
       <Card className="p-4">
         <div className="h-96 relative">
-          <Canvas camera={{ position: [0, 0, 5], fov: 75 }}>
-            <ambientLight intensity={0.4} />
-            <directionalLight position={[5, 5, 5]} intensity={0.8} />
-            <pointLight position={[-5, 5, 5]} intensity={0.6} color="#87CEEB" />
+          <Canvas 
+            camera={{ position: [0, 0, 5], fov: 75 }}
+            shadows
+          >
+            {/* Enhanced lighting setup */}
+            <ambientLight intensity={0.2} color="#ffffff" />
+            <directionalLight 
+              position={[5, 3, 5]} 
+              intensity={1.2} 
+              color="#ffffff"
+              castShadow
+              shadow-mapSize-width={2048}
+              shadow-mapSize-height={2048}
+            />
+            <pointLight 
+              position={[-3, 2, 4]} 
+              intensity={0.8} 
+              color="#4dd0e7"
+              distance={10}
+            />
+            <hemisphereLight 
+              args={["#87CEEB", "#2F4F4F", 0.3]}
+            />
             
-            <GlobeGeometry 
+            <RealisticGlobe 
               countryData={countryData}
               hoveredCountry={hoveredCountry}
               setHoveredCountry={setHoveredCountry}
@@ -325,10 +486,14 @@ const Globe3D: React.FC<Globe3DProps> = ({ selectedLanguages }) => {
               enablePan={false}
               enableZoom={true}
               enableRotate={true}
-              minDistance={2.5}
-              maxDistance={6}
-              rotateSpeed={0.5}
-              zoomSpeed={0.8}
+              enableDamping={true}
+              dampingFactor={0.05}
+              minDistance={2.8}
+              maxDistance={8}
+              rotateSpeed={0.3}
+              zoomSpeed={0.6}
+              autoRotate={false}
+              autoRotateSpeed={0.5}
             />
           </Canvas>
 
@@ -363,23 +528,27 @@ const Globe3D: React.FC<Globe3DProps> = ({ selectedLanguages }) => {
         <h4 className="font-semibold mb-3">Globe Legend</h4>
         <div className="space-y-2">
           <div className="flex items-center space-x-2">
-            <div className="w-4 h-4 rounded-full" style={{ backgroundColor: 'hsl(220, 20%, 30%)' }} />
-            <span className="text-sm">Unselected regions</span>
+            <div className="w-4 h-4 rounded-full" style={{ backgroundColor: getCountryColor(0, false).getStyle() }} />
+            <span className="text-sm">Land without selected languages</span>
           </div>
           <div className="flex items-center space-x-2">
-            <div className="w-4 h-4 rounded-full" style={{ backgroundColor: 'hsl(220, 75%, 50%)' }} />
-            <span className="text-sm">Low coverage (0-50%)</span>
+            <div className="w-4 h-4 rounded-full" style={{ backgroundColor: getCountryColor(0.25, true).getStyle() }} />
+            <span className="text-sm">Low coverage (0-25%)</span>
           </div>
           <div className="flex items-center space-x-2">
-            <div className="w-4 h-4 rounded-full" style={{ backgroundColor: 'hsl(240, 85%, 60%)' }} />
-            <span className="text-sm">Medium coverage (50-75%)</span>
+            <div className="w-4 h-4 rounded-full" style={{ backgroundColor: getCountryColor(0.5, true).getStyle() }} />
+            <span className="text-sm">Medium coverage (25-75%)</span>
           </div>
           <div className="flex items-center space-x-2">
-            <div className="w-4 h-4 rounded-full" style={{ backgroundColor: 'hsl(260, 90%, 70%)' }} />
+            <div className="w-4 h-4 rounded-full" style={{ backgroundColor: getCountryColor(1.0, true).getStyle() }} />
             <span className="text-sm">High coverage (75-100%)</span>
           </div>
+          <div className="flex items-center space-x-2">
+            <div className="w-4 h-4 rounded-full bg-gradient-to-r from-blue-400 to-cyan-300" />
+            <span className="text-sm">Atmospheric glow effect</span>
+          </div>
           <p className="text-xs text-muted-foreground mt-2">
-            Surface coloring shows language coverage intensity. Hover over markers for details.
+            Realistic Earth surface with language coverage overlays. Click and drag to rotate, scroll to zoom.
           </p>
         </div>
       </Card>
