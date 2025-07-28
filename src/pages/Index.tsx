@@ -29,12 +29,21 @@ const Index = () => {
                 <Globe className="w-6 h-6 text-primary-foreground" />
               </div>
               <h1 className="text-4xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-                Language Connect World
+                GeoLingua – Discover Your Global Communication Power
               </h1>
             </div>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Discover the global reach of languages and unlock your communication potential worldwide
-            </p>
+            
+            {/* Questions Section */}
+            <div className="space-y-3">
+              <h2 className="text-2xl font-semibold text-foreground">
+                Answer these questions:
+              </h2>
+              <div className="space-y-2 text-lg text-muted-foreground max-w-3xl mx-auto">
+                <p>Pick a language and instantly see how many people you can connect with, across countries and cultures</p>
+                <p>Explore the languages of the world, their speakers, and global influence in one interactive map.</p>
+                <p>See where your words can take you—visualize how far your language reaches across the world.</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
