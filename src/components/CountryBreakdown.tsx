@@ -138,6 +138,15 @@ const CountryBreakdown: React.FC<CountryBreakdownProps> = ({ selectedLanguages }
           </div>
         ) : (
           <>
+            {/* Summary Message at Top */}
+            <Card className="bg-gradient-primary text-primary-foreground">
+              <CardContent className="p-4 text-center">
+                <p className="text-lg font-semibold">
+                  You can communicate effectively in <strong>{countries.length} countries</strong> with your selected languages
+                </p>
+              </CardContent>
+            </Card>
+
             {countries.map((country: any, index: number) => (
               <Card key={country.code} className="border-l-4 border-primary">
                 <CardContent className="p-4 space-y-4">
@@ -216,15 +225,6 @@ const CountryBreakdown: React.FC<CountryBreakdownProps> = ({ selectedLanguages }
               </Card>
             ))}
 
-            {countries.length > 0 && (
-              <Card className="bg-muted">
-                <CardContent className="p-4 text-center">
-                  <p className="text-sm text-muted-foreground">
-                    You can communicate effectively in <strong>{countries.length} countries</strong> with your selected languages
-                  </p>
-                </CardContent>
-              </Card>
-            )}
           </>
         )}
       </CardContent>

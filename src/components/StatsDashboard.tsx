@@ -94,37 +94,25 @@ const StatsDashboard: React.FC<StatsDashboardProps> = ({ selectedLanguages }) =>
 
   return (
     <div className="space-y-6">
-      <Card className="shadow-card-custom">
-        <CardHeader className="text-center">
-          <CardTitle className="flex items-center justify-center space-x-2">
-            <TrendingUp className="w-5 h-5 text-primary" />
-            <span>Communication Reach</span>
-          </CardTitle>
-          <p className="text-muted-foreground">
-            Your global communication potential with selected languages
-          </p>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {statsCards.map((card, index) => (
-              <Card key={index} className="relative overflow-hidden">
-                <CardContent className="p-6">
-                  <div className="flex items-center space-x-4">
-                    <div className={`w-12 h-12 ${card.gradient} rounded-full flex items-center justify-center`}>
-                      <card.icon className="w-6 h-6 text-white" />
-                    </div>
-                    <div>
-                      <div className="text-2xl font-bold text-foreground">{card.value}</div>
-                      <div className="text-sm font-medium text-foreground">{card.title}</div>
-                      <div className="text-xs text-muted-foreground">{card.description}</div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+      {/* Simplified Communication Reach */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {statsCards.map((card, index) => (
+          <Card key={index} className="relative overflow-hidden shadow-card-custom hover:shadow-lg transition-shadow">
+            <CardContent className="p-4">
+              <div className="flex items-start space-x-3">
+                <div className={`w-10 h-10 ${card.gradient} rounded-lg flex items-center justify-center flex-shrink-0`}>
+                  <card.icon className="w-5 h-5 text-white" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="text-2xl font-bold text-foreground mb-1">{card.value}</div>
+                  <div className="text-sm font-medium text-foreground">{card.title}</div>
+                  <div className="text-xs text-muted-foreground mt-1">{card.description}</div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
 
       {/* Multilingual Advantage */}
       {selectedLanguages.length > 1 && (

@@ -20,28 +20,66 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-background">
-      {/* Header */}
-      <div className="bg-card shadow-card-custom border-b">
-        <div className="container mx-auto px-4 py-6">
-          <div className="text-center space-y-4">
-            <div className="flex items-center justify-center space-x-3">
-              <div className="w-12 h-12 bg-gradient-primary rounded-full flex items-center justify-center">
-                <Globe className="w-6 h-6 text-primary-foreground" />
+      {/* Modern Hero Section */}
+      <div className="bg-gradient-to-br from-blue-50 via-purple-50 to-indigo-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 rounded-3xl mx-4 mt-4 mb-8 overflow-hidden shadow-2xl">
+        <div className="container mx-auto px-6 py-16">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center min-h-[500px]">
+            {/* Left Side - Content */}
+            <div className="space-y-8">
+              <div className="space-y-4">
+                <h1 className="text-5xl lg:text-6xl font-bold leading-tight">
+                  <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
+                    GeoLingua
+                  </span>
+                  <br />
+                  <span className="text-foreground text-4xl lg:text-5xl">
+                    Discover Your Global Communication Power
+                  </span>
+                </h1>
+                
+                <div className="space-y-4 text-lg text-muted-foreground max-w-xl">
+                  <p className="font-medium">Answer these questions:</p>
+                  <div className="space-y-2">
+                    <p>• Pick a language and instantly see how many people you can connect with</p>
+                    <p>• Explore the languages of the world and their global influence</p>
+                    <p>• See where your words can take you across the world</p>
+                  </div>
+                </div>
               </div>
-              <h1 className="text-4xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-                GeoLingua – Discover Your Global Communication Power
-              </h1>
+              
+              <div className="flex flex-col sm:flex-row gap-4">
+                <div className="bg-primary/10 text-primary px-6 py-3 rounded-full text-sm font-medium border border-primary/20">
+                  ✨ Interactive Language Explorer
+                </div>
+                <div className="bg-secondary/10 text-secondary-foreground px-6 py-3 rounded-full text-sm font-medium border border-secondary/20">
+                  🌍 Global Communication Insights
+                </div>
+              </div>
             </div>
-            
-            {/* Questions Section */}
-            <div className="space-y-3">
-              <h2 className="text-2xl font-semibold text-foreground">
-                Answer these questions:
-              </h2>
-              <div className="space-y-2 text-lg text-muted-foreground max-w-3xl mx-auto">
-                <p>Pick a language and instantly see how many people you can connect with, across countries and cultures</p>
-                <p>Explore the languages of the world, their speakers, and global influence in one interactive map.</p>
-                <p>See where your words can take you—visualize how far your language reaches across the world.</p>
+
+            {/* Right Side - 3D Globe Placeholder */}
+            <div className="flex items-center justify-center">
+              <div className="relative">
+                <div className="w-80 h-80 rounded-full bg-gradient-to-br from-blue-400 via-purple-500 to-indigo-600 shadow-2xl animate-pulse">
+                  <div className="absolute inset-4 rounded-full bg-gradient-to-br from-blue-300 via-purple-400 to-indigo-500 opacity-80">
+                    <div className="absolute inset-4 rounded-full bg-gradient-to-br from-blue-200 via-purple-300 to-indigo-400 opacity-60">
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <Globe className="w-32 h-32 text-white animate-spin" style={{ animationDuration: '20s' }} />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Floating Elements */}
+                <div className="absolute -top-4 -right-4 w-16 h-16 bg-yellow-400 rounded-full flex items-center justify-center animate-bounce" style={{ animationDelay: '0.5s' }}>
+                  <span className="text-2xl">🗣️</span>
+                </div>
+                <div className="absolute -bottom-4 -left-4 w-16 h-16 bg-green-400 rounded-full flex items-center justify-center animate-bounce" style={{ animationDelay: '1s' }}>
+                  <span className="text-2xl">🌏</span>
+                </div>
+                <div className="absolute top-1/2 -right-8 w-12 h-12 bg-red-400 rounded-full flex items-center justify-center animate-bounce" style={{ animationDelay: '1.5s' }}>
+                  <span className="text-xl">💬</span>
+                </div>
               </div>
             </div>
           </div>
