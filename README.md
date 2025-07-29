@@ -21,19 +21,19 @@
 - [Future Roadmap and Potential Features](#-future-roadmap-and-potential-features)
 - [Origin](#-origin)
 - [Quick Start](#quick-start)
-- [API Endpoints](#api-endpoints)
 - [Comparable Projects](#-comparable-projects)
 - [Target Users & Use Cases](#-target-users--use-cases)
 - [Risks & Challenges](#️-risks--challenges)
 - [Potential Monetization & Growth Ideas](#-potential-monetization--growth-ideas)
 - [Known Issues](#-known-issues)
+- [Technical Details](#-technical-details)
 - [Built With](#-built-with)
 - [Lovable Prompt](#-lovable-prompt)
 - [Author](#-author)
 - [License](#-license)
 
 
-## 🧠 **Planned Core Features**
+## 🧠 **Features**
 
 1. ### **Interactive Language Heatmap**
    - World map colored by % of population speaking the selected language(s).
@@ -65,11 +65,10 @@
 
 ![GeoTime Demo](./readme_assets/demo.png)
 
-![Event Popup](./readme_assets/popup.png)
+![Event Popup](./readme_assets/insights.png)
 
----
 
-## 🔮 **Future Roadmap of Potential Features**
+## 🔮 **Future Roadmap and Potential Features**
 
 - 📤 **Shareable Snapshots** – Export your language coverage map as a visual.
 - 🔀 **Multilingual Overlay** – Visualize overlapping regions for your selected languages.
@@ -79,6 +78,8 @@
 - 🆚 **Language Comparison Mode** – Compare 2–3 languages for overlap, speakers, and reach.
 - 💬 **Conversational Data Explorer** – “Ask anything” interface over the dataset.  
   *e.g.,* *“Which African countries have >40% English speakers as L2?”*
+
+---
 
 ## **Origin**
 
@@ -94,7 +95,7 @@ This led to a vision: a platform where users could input the languages they spea
 
 ### **Why I Couldn't Build It Then**
 
-I lacked full-stack development skills at the time. Today, with the rise of tools like **Lovable** and AI-powered coding workflows, the concept is finally becoming reality.
+I lacked full-stack development skills at the time. Today, with the rise of tools like **Lovable** and AI-powered coding workflows, the idea can finally be executed.
 
 ---
 
@@ -127,7 +128,6 @@ npm run dev
 | Duolingo Stats | Speaker numbers for popular languages   | No global visualizations                 |
 | WorldPop       | Geographic demographic data             | Not language-specific                    |
 
----
 
 ### **How GeoLingua Stands Out**
 
@@ -139,7 +139,7 @@ npm run dev
 
 ## 👥 **Target Users & Use Cases**
 
-###**Target Users**
+### **Target Users**
 
 | User Type         | Example Case                                                             |
 |-------------------|--------------------------------------------------------------------------|
@@ -147,12 +147,11 @@ npm run dev
 | ✈️ Travelers / Nomads | Choose destinations based on language familiarity                     |
 | 🧠 Educators         | Demonstrate language geography and relevance in class or presentations |
 
-###**Use Cases**
+### **Use Cases**
 * Find how many people one can communicate with based on known languages.
 * Discover which new language gives the maximum global communication advantage.
 * Plan travel destinations with fewer language barriers.
 
----
 
 ## ⚠️ **Risks & Challenges**
 
@@ -160,7 +159,6 @@ npm run dev
 * **Variants and Dialects:** Managing regional differences (e.g., Latin American Spanish vs. Castilian).
 * **Performance:** Interactive heatmaps with large datasets.
 
----
 
 ## 💰 Potential Monetization
 
@@ -172,7 +170,6 @@ npm run dev
 
 ## **🐛 Known Issues**
 
----
 
 ## Technical Details
 
