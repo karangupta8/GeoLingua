@@ -71,3 +71,45 @@ Yes, you can!
 To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
 Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+
+## Technical Details
+
+### Architecture Overview
+
+**GeoLingua** is a React-based web application that visualizes global language distribution through interactive 3D maps and statistical dashboards.
+
+### Technology Stack
+
+- **Frontend**: React 18 + TypeScript + Vite
+- **3D Graphics**: React Three Fiber + Three.js + React Three Drei
+- **UI Components**: shadcn/ui + Tailwind CSS
+- **State Management**: React hooks + custom service layer
+- **Data Format**: Static JSON with language and geographic data
+
+### Data Pipeline
+
+**Language Data Service**
+- Language data is served from static JSON files in `/public/data/languages.json`
+- `LanguageService` provides caching layer and API abstraction
+- Data structure includes speaker counts, country distributions, and geographic coordinates
+- Custom hooks (`useLanguages`) manage async data fetching and state
+
+**3D Globe Integration**
+- User language selections trigger real-time data filtering
+- Geographic coordinates are mapped to 3D sphere positions using spherical coordinate conversion
+- Country markers are dynamically positioned and colored based on language coverage intensity
+- Language connection arcs are generated between countries sharing selected languages
+
+**Visual Output System**
+- Country intensity calculated from speaker percentages (0-100%)
+- Color gradients represent language coverage: green (low) → yellow → red (high)
+- Day/night textures simulate realistic Earth appearance with dynamic lighting
+- Atmospheric glow and country borders enhance visual appeal
+- Smooth animations and interactions provide responsive user experience
+
+### Performance Optimizations
+
+- Texture caching and memoization for 3D rendering
+- Efficient re-rendering through React optimization patterns
+- Level-of-detail scaling for country markers based on coverage
+- Debounced user interactions to prevent excessive re-calculations

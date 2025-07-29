@@ -85,43 +85,160 @@ const getCountryColor = (intensity: number, hasLanguage: boolean): THREE.Color =
   return new THREE.Color().setHSL(hue, saturation, lightness);
 };
 
-// Create realistic Earth textures
-const createEarthTexture = () => {
+// Create day/night Earth texture with realistic geography
+const createDayNightTexture = (time: number = 0) => {
   const canvas = document.createElement('canvas');
   canvas.width = 2048;
   canvas.height = 1024;
   const context = canvas.getContext('2d')!;
   
-  // Create Earth-like base texture
-  const gradient = context.createLinearGradient(0, 0, 0, canvas.height);
-  gradient.addColorStop(0, '#87CEEB'); // Sky blue at poles
-  gradient.addColorStop(0.3, '#4682B4'); // Steel blue
-  gradient.addColorStop(0.7, '#228B22'); // Forest green
-  gradient.addColorStop(1, '#87CEEB'); // Sky blue at bottom pole
+  // Create ocean gradient (deep blue)
+  const oceanGradient = context.createLinearGradient(0, 0, 0, canvas.height);
+  oceanGradient.addColorStop(0, '#0f172a'); // Dark blue at poles
+  oceanGradient.addColorStop(0.5, '#1e40af'); // Ocean blue
+  oceanGradient.addColorStop(1, '#0f172a'); // Dark blue at bottom
   
-  context.fillStyle = gradient;
+  context.fillStyle = oceanGradient;
   context.fillRect(0, 0, canvas.width, canvas.height);
   
-  // Add continents (simplified landmasses)
-  context.fillStyle = '#2F4F2F'; // Dark green for land
+  // Add realistic continent shapes with proper colors
+  const drawContinents = () => {
+    context.fillStyle = '#15803d'; // Forest green for land
+    
+    // North America
+    context.beginPath();
+    context.moveTo(200, 250);
+    context.quadraticCurveTo(350, 200, 500, 280);
+    context.quadraticCurveTo(450, 400, 300, 450);
+    context.quadraticCurveTo(150, 420, 200, 250);
+    context.fill();
+    
+    // Greenland
+    context.beginPath();
+    context.ellipse(600, 150, 40, 60, 0, 0, Math.PI * 2);
+    context.fill();
+    
+    // South America
+    context.beginPath();
+    context.moveTo(420, 500);
+    context.quadraticCurveTo(480, 520, 460, 650);
+    context.quadraticCurveTo(440, 800, 400, 900);
+    context.quadraticCurveTo(350, 850, 380, 700);
+    context.quadraticCurveTo(360, 550, 420, 500);
+    context.fill();
+    
+    // Europe
+    context.beginPath();
+    context.ellipse(950, 280, 120, 80, 0, 0, Math.PI * 2);
+    context.fill();
+    
+    // Asia
+    context.beginPath();
+    context.ellipse(1300, 320, 300, 150, 0, 0, Math.PI * 2);
+    context.fill();
+    
+    // Africa
+    context.beginPath();
+    context.moveTo(920, 420);
+    context.quadraticCurveTo(1000, 450, 980, 600);
+    context.quadraticCurveTo(950, 750, 900, 800);
+    context.quadraticCurveTo(850, 750, 880, 600);
+    context.quadraticCurveTo(860, 450, 920, 420);
+    context.fill();
+    
+    // Australia
+    context.beginPath();
+    context.ellipse(1450, 750, 120, 70, 0, 0, Math.PI * 2);
+    context.fill();
+    
+    // Antarctica (bottom edge)
+    context.fillRect(0, 950, canvas.width, 74);
+  };
   
-  // North America
-  context.fillRect(200, 200, 400, 300);
-  context.fillRect(150, 350, 300, 200);
+  drawContinents();
   
-  // South America  
-  context.fillRect(400, 600, 200, 400);
+  // Add country borders
+  context.strokeStyle = '#10b981'; // Emerald color for borders
+  context.lineWidth = 1;
+  context.globalAlpha = 0.6;
   
-  // Europe/Asia
-  context.fillRect(800, 150, 800, 400);
-  context.fillRect(900, 250, 600, 300);
+  // Draw major country border lines
+  const drawBorders = () => {
+    // USA-Canada border
+    context.beginPath();
+    context.moveTo(200, 300);
+    context.lineTo(500, 290);
+    context.stroke();
+    
+    // Mexico border
+    context.beginPath();
+    context.moveTo(250, 400);
+    context.lineTo(450, 420);
+    context.stroke();
+    
+    // European borders
+    for (let i = 0; i < 8; i++) {
+      context.beginPath();
+      context.moveTo(850 + i * 25, 250);
+      context.lineTo(860 + i * 25, 320);
+      context.stroke();
+    }
+    
+    // African country borders
+    for (let i = 0; i < 6; i++) {
+      context.beginPath();
+      context.moveTo(880, 450 + i * 50);
+      context.lineTo(980, 460 + i * 50);
+      context.stroke();
+    }
+  };
   
-  // Africa
-  context.fillRect(900, 450, 300, 500);
+  drawBorders();
+  context.globalAlpha = 1.0;
   
-  // Australia
-  context.fillRect(1300, 700, 200, 150);
+  // Add day/night terminator
+  const terminatorX = (time * canvas.width) % canvas.width;
+  const nightGradient = context.createLinearGradient(terminatorX - 100, 0, terminatorX + 100, 0);
+  nightGradient.addColorStop(0, 'rgba(0, 0, 0, 0)');
+  nightGradient.addColorStop(0.5, 'rgba(0, 0, 0, 0.7)');
+  nightGradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
   
+  context.fillStyle = nightGradient;
+  context.fillRect(0, 0, canvas.width, canvas.height);
+  
+  return new THREE.CanvasTexture(canvas);
+};
+
+// Create normal map for enhanced surface detail
+const createNormalTexture = () => {
+  const canvas = document.createElement('canvas');
+  canvas.width = 1024;
+  canvas.height = 512;
+  const context = canvas.getContext('2d')!;
+  
+  // Base normal color (pointing up)
+  context.fillStyle = '#8080ff';
+  context.fillRect(0, 0, canvas.width, canvas.height);
+  
+  // Add terrain variation
+  const imageData = context.createImageData(canvas.width, canvas.height);
+  const data = imageData.data;
+  
+  for (let i = 0; i < data.length; i += 4) {
+    const x = (i / 4) % canvas.width;
+    const y = Math.floor((i / 4) / canvas.width);
+    
+    // Create terrain-like normal variations
+    const noise = (Math.sin(x * 0.1) + Math.cos(y * 0.08)) * 0.3 + 0.5;
+    const normal = 128 + noise * 20;
+    
+    data[i] = normal;     // Red (X normal)
+    data[i + 1] = normal; // Green (Y normal)  
+    data[i + 2] = 255;    // Blue (Z normal - pointing up)
+    data[i + 3] = 255;    // Alpha
+  }
+  
+  context.putImageData(imageData, 0, 0);
   return new THREE.CanvasTexture(canvas);
 };
 
@@ -155,7 +272,9 @@ function RealisticGlobe({ countryData, hoveredCountry, setHoveredCountry }: {
 }) {
   const globeRef = useRef<THREE.Mesh>(null);
   const atmosphereRef = useRef<THREE.Mesh>(null);
+  const arcsRef = useRef<THREE.Group>(null);
   const [autoRotate, setAutoRotate] = useState(true);
+  const [timeOffset, setTimeOffset] = useState(0);
   const { camera } = useThree();
 
   // Pause auto-rotation when user interacts
@@ -173,87 +292,87 @@ function RealisticGlobe({ countryData, hoveredCountry, setHoveredCountry }: {
     if (atmosphereRef.current) {
       atmosphereRef.current.rotation.y += 0.001;
     }
+    
+    // Update day/night cycle
+    setTimeOffset(state.clock.elapsedTime * 0.1);
+    
+    // Animate language arcs
+    if (arcsRef.current) {
+      arcsRef.current.children.forEach((child, index) => {
+        if (child instanceof THREE.Mesh) {
+          const material = child.material as THREE.MeshBasicMaterial;
+          const pulse = Math.sin(state.clock.elapsedTime * 2 + index * 0.5) * 0.3 + 0.7;
+          material.opacity = pulse;
+        }
+      });
+    }
   });
 
-  // Create realistic Earth texture with country overlays
+  // Enhanced Earth texture with day/night cycle and language coverage
   const earthTexture = useMemo(() => {
-    const canvas = document.createElement('canvas');
-    canvas.width = 2048;
-    canvas.height = 1024;
-    const context = canvas.getContext('2d')!;
-    
-    // Base Earth texture - oceans
-    const oceanGradient = context.createLinearGradient(0, 0, 0, canvas.height);
-    oceanGradient.addColorStop(0, '#1e3a5f'); // Deep ocean blue at top
-    oceanGradient.addColorStop(0.5, '#2563eb'); // Bright ocean blue
-    oceanGradient.addColorStop(1, '#1e3a5f'); // Deep ocean blue at bottom
-    
-    context.fillStyle = oceanGradient;
-    context.fillRect(0, 0, canvas.width, canvas.height);
-    
-    // Draw continents with realistic shapes (simplified)
-    context.fillStyle = '#22c55e'; // Green landmass base
-    
-    // North America (rough shape)
-    context.beginPath();
-    context.ellipse(300, 350, 180, 120, 0, 0, Math.PI * 2);
-    context.fill();
-    
-    // South America
-    context.beginPath();
-    context.ellipse(450, 650, 80, 200, 0, 0, Math.PI * 2);
-    context.fill();
-    
-    // Europe/Asia landmass
-    context.beginPath();
-    context.ellipse(1100, 300, 300, 150, 0, 0, Math.PI * 2);
-    context.fill();
-    
-    // Africa
-    context.beginPath();
-    context.ellipse(1000, 550, 120, 180, 0, 0, Math.PI * 2);
-    context.fill();
-    
-    // Australia
-    context.beginPath();
-    context.ellipse(1400, 750, 80, 50, 0, 0, Math.PI * 2);
-    context.fill();
-    
-    // Overlay country language coverage
-    countryData.forEach(country => {
-      if (country.languages.length > 0) {
-        const x = ((country.lng + 180) / 360) * canvas.width;
-        const y = ((90 - country.lat) / 180) * canvas.height;
-        
-        const intensity = country.speakerPercentage / 100;
-        const radius = 25 + intensity * 35;
-        
-        // Create glowing effect for language coverage
-        const gradient = context.createRadialGradient(x, y, 0, x, y, radius);
-        
-        const color = getCountryColor(intensity, true);
-        const rgbColor = `rgb(${Math.floor(color.r * 255)}, ${Math.floor(color.g * 255)}, ${Math.floor(color.b * 255)})`;
-        const rgbaColor = `rgba(${Math.floor(color.r * 255)}, ${Math.floor(color.g * 255)}, ${Math.floor(color.b * 255)}, 0.5)`;
-        
-        gradient.addColorStop(0, rgbColor);
-        gradient.addColorStop(0.7, rgbaColor); // Semi-transparent using RGBA
-        gradient.addColorStop(1, 'transparent');
-        
-        context.globalCompositeOperation = 'overlay';
-        context.fillStyle = gradient;
-        context.beginPath();
-        context.arc(x, y, radius, 0, Math.PI * 2);
-        context.fill();
-        context.globalCompositeOperation = 'source-over';
-      }
-    });
+    return createDayNightTexture(timeOffset);
+  }, [timeOffset]);
 
-    const texture = new THREE.CanvasTexture(canvas);
-    texture.needsUpdate = true;
-    return texture;
-  }, [countryData]);
+  const normalTexture = useMemo(() => createNormalTexture(), []);
 
   const bumpTexture = useMemo(() => createBumpTexture(), []);
+
+  // Create language connection arcs between countries
+  const languageArcs = useMemo(() => {
+    const arcs: JSX.Element[] = [];
+    const processedPairs = new Set<string>();
+    
+    countryData.forEach((country1, i) => {
+      if (country1.languages.length === 0) return;
+      
+      countryData.forEach((country2, j) => {
+        if (i >= j || country2.languages.length === 0) return;
+        
+        // Check if countries share languages
+        const sharedLanguages = country1.languages.filter(lang => 
+          country2.languages.includes(lang)
+        );
+        
+        if (sharedLanguages.length > 0) {
+          const pairKey = `${country1.code}-${country2.code}`;
+          const reversePairKey = `${country2.code}-${country1.code}`;
+          
+          if (processedPairs.has(pairKey) || processedPairs.has(reversePairKey)) return;
+          processedPairs.add(pairKey);
+          
+          const start = latLngToVector3(country1.lat, country1.lng, 2.02);
+          const end = latLngToVector3(country2.lat, country2.lng, 2.02);
+          
+          // Create arc curve
+          const midpoint = start.clone().add(end).multiplyScalar(0.5);
+          const distance = start.distanceTo(end);
+          const arcHeight = Math.min(distance * 0.8, 1.5);
+          midpoint.normalize().multiplyScalar(2 + arcHeight);
+          
+          const curve = new THREE.QuadraticBezierCurve3(start, midpoint, end);
+          const points = curve.getPoints(32);
+          const geometry = new THREE.BufferGeometry().setFromPoints(points);
+          
+          const intensity = Math.max(country1.speakerPercentage, country2.speakerPercentage) / 100;
+          const arcColor = getCountryColor(intensity, true);
+          
+          arcs.push(
+            <line key={pairKey}>
+              <bufferGeometry attach="geometry" {...geometry} />
+              <lineBasicMaterial 
+                color={arcColor}
+                transparent
+                opacity={0.6}
+                linewidth={3}
+              />
+            </line>
+          );
+        }
+      });
+    });
+    
+    return arcs;
+  }, [countryData]);
 
   // Country markers as subtle surface indicators
   const countryMarkers = countryData
@@ -298,34 +417,56 @@ function RealisticGlobe({ countryData, hoveredCountry, setHoveredCountry }: {
 
   return (
     <group>
-      {/* Main Earth sphere */}
+      {/* Main Earth sphere with enhanced textures */}
       <mesh 
         ref={globeRef}
         onPointerDown={handleInteractionStart}
         onPointerUp={handleInteractionEnd}
       >
-        <sphereGeometry args={[2, 128, 64]} />
+        <sphereGeometry args={[2, 256, 128]} />
         <meshStandardMaterial 
           map={earthTexture}
+          normalMap={normalTexture}
+          normalScale={new THREE.Vector2(0.3, 0.3)}
           bumpMap={bumpTexture}
-          bumpScale={0.05}
-          roughness={0.9}
+          bumpScale={0.02}
+          roughness={0.7}
           metalness={0.1}
+          emissive={new THREE.Color(0x001122)}
+          emissiveIntensity={0.1}
         />
       </mesh>
 
-      {/* Atmospheric glow - simplified using standard material */}
-      <mesh ref={atmosphereRef} scale={[1.05, 1.05, 1.05]}>
+      {/* Multi-layer atmospheric glow */}
+      <mesh ref={atmosphereRef} scale={[1.03, 1.03, 1.03]}>
         <sphereGeometry args={[2, 64, 32]} />
+        <meshBasicMaterial 
+          color={0x87ceeb}
+          transparent
+          opacity={0.2}
+          side={THREE.BackSide}
+        />
+      </mesh>
+      
+      {/* Outer atmospheric glow */}
+      <mesh scale={[1.08, 1.08, 1.08]}>
+        <sphereGeometry args={[2, 32, 16]} />
         <meshBasicMaterial 
           color={0x4dd0e7}
           transparent
-          opacity={0.15}
+          opacity={0.08}
           side={THREE.BackSide}
         />
       </mesh>
 
-      {/* Country markers */}
+      {/* Language connection arcs */}
+      <group ref={arcsRef}>
+        {languageArcs.map((arc, index) => (
+          <primitive key={index} object={arc} />
+        ))}
+      </group>
+
+      {/* Country markers with enhanced effects */}
       {countryMarkers}
     </group>
   );
@@ -413,28 +554,40 @@ const Globe3D: React.FC<Globe3DProps> = ({ selectedLanguages }) => {
     <div className="space-y-4">
       <Card className="p-4">
         <div className="h-96 relative">
-          <Canvas 
-            camera={{ position: [0, 0, 5], fov: 75 }}
+            <Canvas 
+            camera={{ position: [0, 0, 5], fov: 60 }}
             shadows
+            gl={{ antialias: true, alpha: true }}
           >
-            {/* Enhanced lighting setup */}
-            <ambientLight intensity={0.2} color="#ffffff" />
+            {/* Realistic lighting setup for day/night */}
+            <ambientLight intensity={0.15} color="#404080" />
             <directionalLight 
               position={[5, 3, 5]} 
-              intensity={1.2} 
+              intensity={1.5} 
               color="#ffffff"
               castShadow
               shadow-mapSize-width={2048}
               shadow-mapSize-height={2048}
+              shadow-camera-near={0.1}
+              shadow-camera-far={50}
+              shadow-camera-left={-10}
+              shadow-camera-right={10}
+              shadow-camera-top={10}
+              shadow-camera-bottom={-10}
+            />
+            <directionalLight 
+              position={[-5, -3, -5]} 
+              intensity={0.3} 
+              color="#1e3a8a"
             />
             <pointLight 
-              position={[-3, 2, 4]} 
-              intensity={0.8} 
-              color="#4dd0e7"
-              distance={10}
+              position={[0, 0, 8]} 
+              intensity={0.4} 
+              color="#60a5fa"
+              distance={20}
             />
             <hemisphereLight 
-              args={["#87CEEB", "#2F4F4F", 0.3]}
+              args={["#87CEEB", "#1e3a8a", 0.4]}
             />
             
             <RealisticGlobe 
@@ -444,17 +597,20 @@ const Globe3D: React.FC<Globe3DProps> = ({ selectedLanguages }) => {
             />
             
             <OrbitControls 
-              enablePan={false}
+              enablePan={true}
               enableZoom={true}
               enableRotate={true}
               enableDamping={true}
-              dampingFactor={0.05}
-              minDistance={2.8}
-              maxDistance={8}
-              rotateSpeed={0.3}
-              zoomSpeed={0.6}
+              dampingFactor={0.03}
+              minDistance={2.5}
+              maxDistance={12}
+              rotateSpeed={0.5}
+              zoomSpeed={0.8}
+              panSpeed={0.5}
               autoRotate={false}
-              autoRotateSpeed={0.5}
+              autoRotateSpeed={0.3}
+              maxPolarAngle={Math.PI}
+              minPolarAngle={0}
             />
           </Canvas>
 
