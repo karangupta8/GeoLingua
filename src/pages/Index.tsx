@@ -1,11 +1,10 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import LanguageSelector from '@/components/LanguageSelector';
 import StatsDashboard from '@/components/StatsDashboard';
 import WorldMap from '@/components/WorldMap';
 import CountryBreakdown from '@/components/CountryBreakdown';
-import { Globe, BarChart3, Map, Users } from 'lucide-react';
+import { Globe } from 'lucide-react';
 import Globe3D from '@/components/Globe3D';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 
@@ -102,47 +101,31 @@ const Index = () => {
             />
           </div>
 
-          {/* Main Dashboard */}
-          <div className="lg:col-span-2">
-            <Tabs defaultValue="overview" className="space-y-6">
-              <TabsList className="grid w-full grid-cols-4 bg-card">
-                <TabsTrigger value="overview" className="flex items-center space-x-2">
-                  <BarChart3 className="w-4 h-4" />
-                  <span className="hidden sm:inline">{t('navigation:insights')}</span>
-                </TabsTrigger>
-                <TabsTrigger value="map" className="flex items-center space-x-2">
-                  <Map className="w-4 h-4" />
-                  <span className="hidden sm:inline">{t('navigation:map')}</span>
-                </TabsTrigger>
-                <TabsTrigger value="countries" className="flex items-center space-x-2">
-                  <Users className="w-4 h-4" />
-                  <span className="hidden sm:inline">{t('navigation:breakdown')}</span>
-                </TabsTrigger>
-                <TabsTrigger value="insights" className="flex items-center space-x-2">
-                  <Globe className="w-4 h-4" />
-                  <span className="hidden sm:inline">{t('navigation:languageSelector')}</span>
-                </TabsTrigger>
-              </TabsList>
+          {/* Main Dashboard - Vertically Stacked Content */}
+          <div className="lg:col-span-2 space-y-8">
+            {/* Statistics Dashboard Section */}
+            <div className="space-y-4">
+              <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
+                📊 Language Insights
+              </h2>
+              <StatsDashboard selectedLanguages={selectedLanguages} />
+            </div>
 
-              <TabsContent value="overview" className="space-y-6">
-                <StatsDashboard selectedLanguages={selectedLanguages} />
-              </TabsContent>
+            {/* 3D Globe Section */}
+            <div className="space-y-4">
+              <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
+                🌍 Interactive Globe
+              </h2>
+              <Globe3D selectedLanguages={selectedLanguages} />
+            </div>
 
-              <TabsContent value="map" className="space-y-6">
-                <Globe3D selectedLanguages={selectedLanguages} />
-              </TabsContent>
-
-              <TabsContent value="countries" className="space-y-6">
-                <CountryBreakdown selectedLanguages={selectedLanguages} />
-              </TabsContent>
-
-              <TabsContent value="insights" className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <StatsDashboard selectedLanguages={selectedLanguages} />
-                  <Globe3D selectedLanguages={selectedLanguages} />
-                </div>
-              </TabsContent>
-            </Tabs>
+            {/* Country Breakdown Section */}
+            <div className="space-y-4">
+              <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
+                🏆 Country Breakdown
+              </h2>
+              <CountryBreakdown selectedLanguages={selectedLanguages} />
+            </div>
           </div>
         </div>
       </div>
