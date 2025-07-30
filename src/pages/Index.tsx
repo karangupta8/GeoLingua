@@ -22,16 +22,13 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-background">
-      {/* Header with Language Switcher */}
-      <div className="container mx-auto px-4 py-4">
-        <div className="flex justify-end">
-          <LanguageSwitcher />
-        </div>
-      </div>
-
       {/* Modern Hero Section */}
       <div className="bg-gradient-to-br from-blue-50 via-purple-50 to-indigo-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 rounded-3xl mx-4 mt-4 mb-8 overflow-hidden shadow-2xl">
         <div className="container mx-auto px-6 py-16">
+          {/* Language Switcher in Hero */}
+          <div className="flex justify-end mb-4">
+            <LanguageSwitcher />
+          </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center min-h-[500px]">
             {/* Left Side - Content */}
             <div className="space-y-8">
