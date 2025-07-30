@@ -49,6 +49,7 @@ const countryCoordinates: Record<string, [number, number]> = {
   SN: [14.4974, -14.4524],
   BR: [-14.2350, -51.9253],
   PT: [39.3999, -8.2245],
+  JP: [36.2048, 138.2529],
   AO: [-11.2027, 17.8739],
   MZ: [-18.6657, 35.5296],
   EG: [26.0975, 30.0444],
@@ -358,7 +359,7 @@ function RealisticGlobe({ countryData, hoveredCountry, setHoveredCountry }: {
           
           arcs.push(
             <line key={pairKey}>
-              <bufferGeometry attach="geometry" {...geometry} />
+              <primitive object={geometry} attach="geometry" />
               <lineBasicMaterial 
                 color={arcColor}
                 transparent
@@ -461,9 +462,7 @@ function RealisticGlobe({ countryData, hoveredCountry, setHoveredCountry }: {
 
       {/* Language connection arcs */}
       <group ref={arcsRef}>
-        {languageArcs.map((arc, index) => (
-          <primitive key={index} object={arc} />
-        ))}
+        {languageArcs}
       </group>
 
       {/* Country markers with enhanced effects */}
@@ -590,11 +589,11 @@ const Globe3D: React.FC<Globe3DProps> = ({ selectedLanguages }) => {
               args={["#87CEEB", "#1e3a8a", 0.4]}
             />
             
-            <RealisticGlobe 
+            {/* <RealisticGlobe 
               countryData={countryData}
               hoveredCountry={hoveredCountry}
               setHoveredCountry={setHoveredCountry}
-            />
+            /> */}
             
             <OrbitControls 
               enablePan={true}

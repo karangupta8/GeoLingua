@@ -2,8 +2,7 @@ import React from 'react';
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Users, Globe, MapPin, TrendingUp, Loader2 } from 'lucide-react';
+import { Users, Earth, MapPin, TrendingUp, Loader2 } from 'lucide-react';
 import { languageService } from '@/services/languageService';
 
 interface StatsDashboardProps {
@@ -62,7 +61,7 @@ const StatsDashboard: React.FC<StatsDashboardProps> = ({ selectedLanguages }) =>
       title: t('dashboard:globalReach'),
       value: `${stats.globalCoverage.toFixed(1)}%`,
       description: t('dashboard:reachDescription'),
-      icon: Globe,
+      icon: Earth,
       gradient: "bg-gradient-accent"
     }
   ];
