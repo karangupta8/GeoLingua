@@ -1,6 +1,6 @@
 # **🌍 GeoLingua**
 
-**GeoLingua** is an interactive web platform that visualizes the global reach of languages. The app helps users understand how many people they can communicate with globally based on the languages they know.
+**GeoLingua** is an interactive multi-lingual web platform that visualizes the global reach of languages. The app helps users understand how many people they can communicate with globally based on the languages they know.
 
 
 ## 🔍 Overview
@@ -11,6 +11,7 @@
 * 🤖 **LLM-Powered Queries:** Ask natural language questions like *"How many people can I interact with English and Spanish?"* — answered instantly by integrated AI.
 * 🧭 **Travel & Learning Insights:** Identify language-friendly travel destinations or get AI-suggested “next best language to learn” based on your goals.
 * ⚙️ **Built Using AI Tools:** Developed using **Lovable**, **Gemini CLI**, and **ChatGPT**, streamlining full-stack development, UI prototyping, and data logic.
+* 🌍 Multilingual Interface Support: Navigate the app in multiple languages, making it accessible and user-friendly for a global audience.
 
 
 ## **📑 Table of Contents**
@@ -59,7 +60,7 @@
 6. ### **Travel-Friendliness Visualization**
    - Highlights countries where the selected language(s) are enough for basic travel.
    - Filter by tourism relevance or region.
-
+7. 6. ### **Multi-Lingual Interface**
 
 ## 🎥 Demo
 
