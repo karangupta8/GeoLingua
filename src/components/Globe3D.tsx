@@ -7,6 +7,8 @@ import { Badge } from '@/components/ui/badge';
 import { LanguageData } from '@/data/languages';
 import { languageService } from '@/services/languageService';
 import { extend } from '@react-three/fiber';
+import { Line } from '@react-three/drei';
+import countryBorders from '@/data/country-borders.json';
 
 interface Globe3DProps {
   selectedLanguages: string[];
@@ -266,6 +268,25 @@ const createBumpTexture = () => {
   return new THREE.CanvasTexture(canvas);
 };
 
+function getBorderLinesFromGeoJSON(geojson: any, radius = 2.021) {
+  const lines: Array<Array<[number, number, number]>> = [];
+  geojson.features.forEach((feature: any) => {
+    const { coordinates, type } = feature.geometry;
+    if (type === 'Polygon') {
+      coordinates.forEach((ring: any) => {
+        lines.push(ring.map(([lng, lat]: [number, number]) => latLngToVector3(lat, lng, radius).toArray()));
+      });
+    } else if (type === 'MultiPolygon') {
+      coordinates.forEach((polygon: any) => {
+        polygon.forEach((ring: any) => {
+          lines.push(ring.map(([lng, lat]: [number, number]) => latLngToVector3(lat, lng, radius).toArray()));
+        });
+      });
+    }
+  });
+  return lines;
+}
+
 function RealisticGlobe({ countryData, hoveredCountry, setHoveredCountry }: {
   countryData: CountryData[];
   hoveredCountry: string | null;
@@ -318,6 +339,8 @@ function RealisticGlobe({ countryData, hoveredCountry, setHoveredCountry }: {
 
   const bumpTexture = useMemo(() => createBumpTexture(), []);
 
+  const borderLines = useMemo(() => getBorderLinesFromGeoJSON(countryBorders), []);
+
   // Create language connection arcs between countries
   const languageArcs = useMemo(() => {
     const arcs: JSX.Element[] = [];
@@ -355,18 +378,17 @@ function RealisticGlobe({ countryData, hoveredCountry, setHoveredCountry }: {
           const geometry = new THREE.BufferGeometry().setFromPoints(points);
           
           const intensity = Math.max(country1.speakerPercentage, country2.speakerPercentage) / 100;
-          const arcColor = getCountryColor(intensity, true);
+          const arcColor = getCountryColor(intensity, true).getHex(); // <-- fix here
           
           arcs.push(
-            <line key={pairKey}>
-              <primitive object={geometry} attach="geometry" />
-              <lineBasicMaterial 
-                color={arcColor}
-                transparent
-                opacity={0.6}
-                linewidth={3}
-              />
-            </line>
+            <Line
+              key={pairKey}
+              points={points} // points: Vector3[]
+              color={arcColor}
+              transparent
+              opacity={0.6}
+              lineWidth={3}
+            />
           );
         }
       });
@@ -467,6 +489,17 @@ function RealisticGlobe({ countryData, hoveredCountry, setHoveredCountry }: {
 
       {/* Country markers with enhanced effects */}
       {countryMarkers}
+
+      {borderLines.map((points, i) => (
+        <Line
+          key={i}
+          points={points}
+          color="black"
+          lineWidth={1}
+          transparent
+          opacity={0.6}
+        />
+      ))}
     </group>
   );
 }
@@ -552,7 +585,7 @@ const Globe3D: React.FC<Globe3DProps> = ({ selectedLanguages }) => {
   return (
     <div className="space-y-4">
       <Card className="p-4">
-        <div className="h-96 relative">
+        <div className="h-[700px] relative">
             <Canvas 
             camera={{ position: [0, 0, 5], fov: 60 }}
             shadows
@@ -589,11 +622,11 @@ const Globe3D: React.FC<Globe3DProps> = ({ selectedLanguages }) => {
               args={["#87CEEB", "#1e3a8a", 0.4]}
             />
             
-            {/* <RealisticGlobe 
+            {<RealisticGlobe 
               countryData={countryData}
               hoveredCountry={hoveredCountry}
               setHoveredCountry={setHoveredCountry}
-            /> */}
+            />}
             
             <OrbitControls 
               enablePan={true}
