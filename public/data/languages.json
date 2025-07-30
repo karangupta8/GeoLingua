@@ -94,5 +94,268 @@
         { "code": "MA", "name": "Morocco", "speakerPercentage": 65, "isOfficial": true, "population": 37000000, "culturalNotes": "Darija (Moroccan Arabic) widely spoken" }
       ]
     }
+    ,
+    {
+      "id": "hindi",
+      "name": "Hindi",
+      "color": "language-hindi",
+      "totalSpeakers": 602000000,
+      "globalCoverage": 7.5,
+      "officialCountries": 2,
+      "countries": [
+        { "code": "IN", "name": "India", "speakerPercentage": 44, "isOfficial": true, "population": 1400000000, "culturalNotes": "One of the two official languages of the Indian government." },
+        { "code": "FJ", "name": "Fiji", "speakerPercentage": 40, "isOfficial": true, "population": 900000, "culturalNotes": "Known as Fiji Hindi, one of three official languages." },
+        { "code": "NP", "name": "Nepal", "speakerPercentage": 0.3, "isOfficial": false, "population": 30000000, "culturalNotes": "Spoken by a minority, mainly in the Terai region." }
+      ]
+    },
+    {
+      "id": "bengali",
+      "name": "Bengali",
+      "color": "language-bengali",
+      "totalSpeakers": 272000000,
+      "globalCoverage": 3.4,
+      "officialCountries": 2,
+      "countries": [
+        { "code": "BD", "name": "Bangladesh", "speakerPercentage": 98, "isOfficial": true, "population": 169000000, "culturalNotes": "National and official language of Bangladesh." },
+        { "code": "IN", "name": "India", "speakerPercentage": 8, "isOfficial": true, "population": 1400000000, "culturalNotes": "Official language in West Bengal, Tripura, and Assam's Barak Valley." }
+      ]
+    },
+    {
+      "id": "russian",
+      "name": "Russian",
+      "color": "language-russian",
+      "totalSpeakers": 258000000,
+      "globalCoverage": 3.2,
+      "officialCountries": 4,
+      "countries": [
+        { "code": "RU", "name": "Russia", "speakerPercentage": 81, "isOfficial": true, "population": 145000000, "culturalNotes": "The most geographically widespread language of Eurasia." },
+        { "code": "BY", "name": "Belarus", "speakerPercentage": 70, "isOfficial": true, "population": 9300000, "culturalNotes": "Co-official with Belarusian." },
+        { "code": "KZ", "name": "Kazakhstan", "speakerPercentage": 20, "isOfficial": true, "population": 19000000, "culturalNotes": "Used for interethnic communication." },
+        { "code": "UA", "name": "Ukraine", "speakerPercentage": 30, "isOfficial": false, "population": 43000000, "culturalNotes": "Widely spoken, especially in the east and south." }
+      ]
+    },
+    {
+      "id": "german",
+      "name": "German",
+      "color": "language-german",
+      "totalSpeakers": 135000000,
+      "globalCoverage": 1.7,
+      "officialCountries": 6,
+      "countries": [
+        { "code": "DE", "name": "Germany", "speakerPercentage": 95, "isOfficial": true, "population": 83000000, "culturalNotes": "Most widely spoken native language in the EU." },
+        { "code": "AT", "name": "Austria", "speakerPercentage": 98, "isOfficial": true, "population": 9000000, "culturalNotes": "Austrian German has distinct vocabulary." },
+        { "code": "CH", "name": "Switzerland", "speakerPercentage": 63, "isOfficial": true, "population": 8700000, "culturalNotes": "One of four national languages, Swiss German dialects are common." },
+        { "code": "BE", "name": "Belgium", "speakerPercentage": 1, "isOfficial": true, "population": 11500000, "culturalNotes": "Official in the German-speaking Community of Belgium." }
+      ]
+    },
+    {
+      "id": "japanese",
+      "name": "Japanese",
+      "color": "language-japanese",
+      "totalSpeakers": 125000000,
+      "globalCoverage": 1.6,
+      "officialCountries": 1,
+      "countries": [
+        { "code": "JP", "name": "Japan", "speakerPercentage": 99, "isOfficial": true, "population": 125000000, "culturalNotes": "Language isolate with a complex writing system." },
+        { "code": "BR", "name": "Brazil", "speakerPercentage": 1, "isOfficial": false, "population": 215000000, "culturalNotes": "Home to the largest Japanese community outside Japan." }
+      ]
+    },
+    {
+      "id": "punjabi",
+      "name": "Punjabi",
+      "color": "language-punjabi",
+      "totalSpeakers": 125000000,
+      "globalCoverage": 1.6,
+      "officialCountries": 1,
+      "countries": [
+        { "code": "PK", "name": "Pakistan", "speakerPercentage": 44, "isOfficial": false, "population": 231000000, "culturalNotes": "Most widely spoken language, but not an official national language. Written in Shahmukhi script." },
+        { "code": "IN", "name": "India", "speakerPercentage": 3, "isOfficial": true, "population": 1400000000, "culturalNotes": "Official language of the state of Punjab. Written in Gurmukhi script." },
+        { "code": "CA", "name": "Canada", "speakerPercentage": 2.6, "isOfficial": false, "population": 38000000, "culturalNotes": "One of the fastest-growing languages in Canada." }
+      ]
+    },
+    {
+      "id": "marathi",
+      "name": "Marathi",
+      "color": "language-marathi",
+      "totalSpeakers": 99000000,
+      "globalCoverage": 1.2,
+      "officialCountries": 1,
+      "countries": [
+        { "code": "IN", "name": "India", "speakerPercentage": 7, "isOfficial": true, "population": 1400000000, "culturalNotes": "Official language of the state of Maharashtra." }
+      ]
+    },
+    {
+      "id": "telugu",
+      "name": "Telugu",
+      "color": "language-telugu",
+      "totalSpeakers": 96000000,
+      "globalCoverage": 1.2,
+      "officialCountries": 1,
+      "countries": [
+        { "code": "IN", "name": "India", "speakerPercentage": 7, "isOfficial": true, "population": 1400000000, "culturalNotes": "Official language of Andhra Pradesh and Telangana states." }
+      ]
+    },
+    {
+      "id": "tamil",
+      "name": "Tamil",
+      "color": "language-tamil",
+      "totalSpeakers": 86000000,
+      "globalCoverage": 1.1,
+      "officialCountries": 3,
+      "countries": [
+        { "code": "IN", "name": "India", "speakerPercentage": 6, "isOfficial": true, "population": 1400000000, "culturalNotes": "Official language of Tamil Nadu. One of the longest-surviving classical languages in the world." },
+        { "code": "LK", "name": "Sri Lanka", "speakerPercentage": 24, "isOfficial": true, "population": 22000000, "culturalNotes": "Co-official language along with Sinhala." },
+        { "code": "SG", "name": "Singapore", "speakerPercentage": 9, "isOfficial": true, "population": 6000000, "culturalNotes": "One of the four official languages." }
+      ]
+    },
+    {
+      "id": "urdu",
+      "name": "Urdu",
+      "color": "language-urdu",
+      "totalSpeakers": 231000000,
+      "globalCoverage": 2.9,
+      "officialCountries": 2,
+      "countries": [
+        { "code": "PK", "name": "Pakistan", "speakerPercentage": 60, "isOfficial": true, "population": 231000000, "culturalNotes": "National language and lingua franca. Mutually intelligible with Hindi." },
+        { "code": "IN", "name": "India", "speakerPercentage": 5, "isOfficial": true, "population": 1400000000, "culturalNotes": "Official in several states like Telangana, UP, Bihar, and Delhi." }
+      ]
+    },
+    {
+      "id": "swahili",
+      "name": "Swahili",
+      "color": "language-swahili",
+      "totalSpeakers": 200000000,
+      "globalCoverage": 2.5,
+      "officialCountries": 4,
+      "countries": [
+        { "code": "TZ", "name": "Tanzania", "speakerPercentage": 90, "isOfficial": true, "population": 65000000, "culturalNotes": "National language, used as a lingua franca for over 120 ethnic groups." },
+        { "code": "KE", "name": "Kenya", "speakerPercentage": 80, "isOfficial": true, "population": 54000000, "culturalNotes": "Co-official with English, widely used in media and commerce." },
+        { "code": "CD", "name": "Democratic Republic of Congo", "speakerPercentage": 50, "isOfficial": false, "population": 95000000, "culturalNotes": "One of four national languages, dominant in the eastern part of the country." },
+        { "code": "UG", "name": "Uganda", "speakerPercentage": 45, "isOfficial": true, "population": 47000000, "culturalNotes": "Made an official language in 2005 to promote regional integration." }
+      ]
+    },
+    {
+      "id": "korean",
+      "name": "Korean",
+      "color": "language-korean",
+      "totalSpeakers": 82000000,
+      "globalCoverage": 1.0,
+      "officialCountries": 2,
+      "countries": [
+        { "code": "KR", "name": "South Korea", "speakerPercentage": 99, "isOfficial": true, "population": 52000000, "culturalNotes": "Language's global profile boosted by K-Pop and Korean Wave." },
+        { "code": "KP", "name": "North Korea", "speakerPercentage": 99, "isOfficial": true, "population": 26000000, "culturalNotes": "Features different vocabulary and pronunciation from the South Korean standard." },
+        { "code": "CN", "name": "China", "speakerPercentage": 0.2, "isOfficial": false, "population": 1440000000, "culturalNotes": "Spoken by the Chaoxianzu ethnic minority, mainly in the Yanbian Prefecture." }
+      ]
+    },
+    {
+      "id": "italian",
+      "name": "Italian",
+      "color": "language-italian",
+      "totalSpeakers": 68000000,
+      "globalCoverage": 0.85,
+      "officialCountries": 4,
+      "countries": [
+        { "code": "IT", "name": "Italy", "speakerPercentage": 95, "isOfficial": true, "population": 59000000, "culturalNotes": "A Romance language, considered one of the most beautiful in the world." },
+        { "code": "CH", "name": "Switzerland", "speakerPercentage": 8, "isOfficial": true, "population": 8700000, "culturalNotes": "One of four national languages, primarily spoken in the canton of Ticino." },
+        { "code": "AR", "name": "Argentina", "speakerPercentage": 3.3, "isOfficial": false, "population": 45000000, "culturalNotes": "Italian has heavily influenced the Rioplatense Spanish dialect." }
+      ]
+    },
+    {
+      "id": "dutch",
+      "name": "Dutch",
+      "color": "language-dutch",
+      "totalSpeakers": 30000000,
+      "globalCoverage": 0.38,
+      "officialCountries": 3,
+      "countries": [
+        { "code": "NL", "name": "Netherlands", "speakerPercentage": 98, "isOfficial": true, "population": 17800000, "culturalNotes": "The standard language from which Afrikaans is derived." },
+        { "code": "BE", "name": "Belgium", "speakerPercentage": 60, "isOfficial": true, "population": 11500000, "culturalNotes": "Official language in the Flanders region and Brussels." },
+        { "code": "SR", "name": "Suriname", "speakerPercentage": 60, "isOfficial": true, "population": 600000, "culturalNotes": "Sole official language, used in government and education." }
+      ]
+    },
+    {
+      "id": "polish",
+      "name": "Polish",
+      "color": "language-polish",
+      "totalSpeakers": 50000000,
+      "globalCoverage": 0.62,
+      "officialCountries": 1,
+      "countries": [
+        { "code": "PL", "name": "Poland", "speakerPercentage": 97, "isOfficial": true, "population": 38000000, "culturalNotes": "One of the largest Slavic languages in the European Union." },
+        { "code": "GB", "name": "United Kingdom", "speakerPercentage": 1.5, "isOfficial": false, "population": 67000000, "culturalNotes": "One of the most common non-native languages spoken in the UK." }
+      ]
+    },
+    {
+      "id": "ukrainian",
+      "name": "Ukrainian",
+      "color": "language-ukrainian",
+      "totalSpeakers": 45000000,
+      "globalCoverage": 0.56,
+      "officialCountries": 1,
+      "countries": [
+        { "code": "UA", "name": "Ukraine", "speakerPercentage": 68, "isOfficial": true, "population": 43000000, "culturalNotes": "The official state language of Ukraine." },
+        { "code": "CA", "name": "Canada", "speakerPercentage": 1.4, "isOfficial": false, "population": 38000000, "culturalNotes": "Canada has one of the largest Ukrainian diaspora populations in the world." }
+      ]
+    },
+    {
+      "id": "indonesian",
+      "name": "Indonesian",
+      "color": "language-indonesian",
+      "totalSpeakers": 200000000,
+      "globalCoverage": 2.5,
+      "officialCountries": 1,
+      "countries": [
+        { "code": "ID", "name": "Indonesia", "speakerPercentage": 94, "isOfficial": true, "population": 273000000, "culturalNotes": "Official language, acts as a lingua franca for over 700 local languages." }
+      ]
+    },
+    {
+      "id": "turkish",
+      "name": "Turkish",
+      "color": "language-turkish",
+      "totalSpeakers": 90000000,
+      "globalCoverage": 1.1,
+      "officialCountries": 2,
+      "countries": [
+        { "code": "TR", "name": "Turkey", "speakerPercentage": 90, "isOfficial": true, "population": 85000000, "culturalNotes": "The most widely spoken of the Turkic languages." },
+        { "code": "DE", "name": "Germany", "speakerPercentage": 3, "isOfficial": false, "population": 83000000, "culturalNotes": "Largest Turkish diaspora community in the world." },
+        { "code": "CY", "name": "Cyprus", "speakerPercentage": 1, "isOfficial": true, "population": 1200000, "culturalNotes": "Co-official language, spoken mainly in Northern Cyprus." }
+      ]
+    },
+    {
+      "id": "vietnamese",
+      "name": "Vietnamese",
+      "color": "language-vietnamese",
+      "totalSpeakers": 95000000,
+      "globalCoverage": 1.2,
+      "officialCountries": 1,
+      "countries": [
+        { "code": "VN", "name": "Vietnam", "speakerPercentage": 96, "isOfficial": true, "population": 97000000, "culturalNotes": "A tonal language with significant Chinese and French influences." },
+        { "code": "US", "name": "United States", "speakerPercentage": 0.5, "isOfficial": false, "population": 331000000, "culturalNotes": "One of the most spoken Asian languages in the US." }
+      ]
+    },
+    {
+      "id": "persian",
+      "name": "Persian",
+      "color": "language-persian",
+      "totalSpeakers": 110000000,
+      "globalCoverage": 1.4,
+      "officialCountries": 3,
+      "countries": [
+        { "code": "IR", "name": "Iran", "speakerPercentage": 62, "isOfficial": true, "population": 88000000, "culturalNotes": "Known locally as Farsi, it has a rich literary history." },
+        { "code": "AF", "name": "Afghanistan", "speakerPercentage": 77, "isOfficial": true, "population": 40000000, "culturalNotes": "Known as Dari, it serves as a lingua franca." },
+        { "code": "TJ", "name": "Tajikistan", "speakerPercentage": 84, "isOfficial": true, "population": 9500000, "culturalNotes": "Known as Tajik, written in Cyrillic script." }
+      ]
+    },
+    {
+      "id": "thai",
+      "name": "Thai",
+      "color": "language-thai",
+      "totalSpeakers": 60000000,
+      "globalCoverage": 0.75,
+      "officialCountries": 1,
+      "countries": [
+        { "code": "TH", "name": "Thailand", "speakerPercentage": 90, "isOfficial": true, "population": 70000000, "culturalNotes": "A tonal language from the Tai-Kadai language family." }
+      ]
+    }
   ]
 }
