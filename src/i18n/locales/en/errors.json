@@ -1,0 +1,7 @@
+{
+  "loadingError": "Failed to load data. Please try again.",
+  "networkError": "Network error. Please check your connection.",
+  "genericError": "Something went wrong. Please try again.",
+  "notFound": "Page not found",
+  "returnHome": "Return to Home"
+}

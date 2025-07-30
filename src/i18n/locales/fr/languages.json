@@ -1,0 +1,16 @@
+{
+  "title": "Sélecteur de Langues",
+  "description": "Choisissez des langues pour analyser votre portée de communication mondiale",
+  "searchPlaceholder": "Rechercher des langues...",
+  "filterBy": "Filtrer par",
+  "popular": "Populaires",
+  "selectedLanguages": "Langues Sélectionnées",
+  "noLanguagesSelected": "Aucune langue sélectionnée",
+  "selectLanguage": "Sélectionner cette langue",
+  "deselectLanguage": "Désélectionner cette langue",
+  "speakers_one": "{{count}} locuteur",
+  "speakers_other": "{{count}} locuteurs",
+  "countries_one": "{{count}} pays",
+  "countries_other": "{{count}} pays",
+  "globalReach": "{{percentage}}% de portée mondiale"
+}

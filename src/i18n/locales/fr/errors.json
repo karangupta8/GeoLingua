@@ -1,0 +1,7 @@
+{
+  "loadingError": "Échec du chargement des données. Veuillez réessayer.",
+  "networkError": "Erreur réseau. Veuillez vérifier votre connexion.",
+  "genericError": "Quelque chose s'est mal passé. Veuillez réessayer.",
+  "notFound": "Page non trouvée",
+  "returnHome": "Retour à l'Accueil"
+}

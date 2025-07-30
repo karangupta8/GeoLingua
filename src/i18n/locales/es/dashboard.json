@@ -1,0 +1,11 @@
+{
+  "selectLanguages": "Selecciona idiomas para ver tu potencial de comunicación global",
+  "totalSpeakers": "Hablantes Totales",
+  "countriesCovered": "Países Cubiertos",
+  "globalReach": "Alcance Global",
+  "multilingualAdvantage": "Ventaja Multilingüe",
+  "speakersDescription": "Personas con las que puedes comunicarte",
+  "countriesDescription": "Países donde se hablan tus idiomas",
+  "reachDescription": "Porcentaje de la población global",
+  "advantageDescription": "Tu alcance combinado de idiomas te da acceso a {{speakers}} hablantes en {{countries}} países, cubriendo el {{coverage}}% de la población mundial."
+}

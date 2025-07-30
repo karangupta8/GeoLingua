@@ -1,0 +1,7 @@
+{
+  "loadingError": "加载数据失败。请重试。",
+  "networkError": "网络错误。请检查您的连接。",
+  "genericError": "出了点问题。请重试。",
+  "notFound": "页面未找到",
+  "returnHome": "返回首页"
+}

@@ -1,5 +1,6 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Users, Globe, MapPin, TrendingUp, Loader2 } from 'lucide-react';
@@ -10,6 +11,7 @@ interface StatsDashboardProps {
 }
 
 const StatsDashboard: React.FC<StatsDashboardProps> = ({ selectedLanguages }) => {
+  const { t } = useTranslation(['dashboard', 'common']);
   const [stats, setStats] = useState({ totalSpeakers: 0, countries: new Set<string>(), globalCoverage: 0 });
   const [isLoading, setIsLoading] = useState(false);
 
@@ -43,23 +45,23 @@ const StatsDashboard: React.FC<StatsDashboardProps> = ({ selectedLanguages }) =>
 
   const statsCards = [
     {
-      title: "Total Speakers",
+      title: t('dashboard:totalSpeakers'),
       value: formatNumber(stats.totalSpeakers),
-      description: "People you can communicate with",
+      description: t('dashboard:speakersDescription'),
       icon: Users,
       gradient: "bg-gradient-primary"
     },
     {
-      title: "Countries Covered",
+      title: t('dashboard:countriesCovered'),
       value: stats.countries.size.toString(),
-      description: "Nations where these languages are spoken",
+      description: t('dashboard:countriesDescription'),
       icon: MapPin,
       gradient: "bg-gradient-secondary"
     },
     {
-      title: "Global Reach",
+      title: t('dashboard:globalReach'),
       value: `${stats.globalCoverage.toFixed(1)}%`,
-      description: "Of world population coverage",
+      description: t('dashboard:reachDescription'),
       icon: Globe,
       gradient: "bg-gradient-accent"
     }
@@ -73,9 +75,9 @@ const StatsDashboard: React.FC<StatsDashboardProps> = ({ selectedLanguages }) =>
             <TrendingUp className="w-8 h-8 text-primary-foreground" />
           </div>
           <div>
-            <h3 className="text-lg font-semibold">Communication Dashboard</h3>
+            <h3 className="text-lg font-semibold">{t('dashboard:totalSpeakers')}</h3>
             <p className="text-muted-foreground">
-              Select languages to see your global communication reach and insights
+              {t('dashboard:selectLanguages')}
             </p>
           </div>
         </div>
@@ -87,7 +89,7 @@ const StatsDashboard: React.FC<StatsDashboardProps> = ({ selectedLanguages }) =>
     return (
       <Card className="p-8 text-center shadow-card-custom">
         <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-primary" />
-        <p className="text-muted-foreground">Calculating communication reach...</p>
+        <p className="text-muted-foreground">{t('common:loading')}</p>
       </Card>
     );
   }
@@ -119,9 +121,13 @@ const StatsDashboard: React.FC<StatsDashboardProps> = ({ selectedLanguages }) =>
         <Card className="shadow-card-custom bg-gradient-secondary">
           <CardContent className="p-6 text-secondary-foreground">
             <div className="text-center space-y-2">
-              <h3 className="text-lg font-semibold">Multilingual Advantage</h3>
+              <h3 className="text-lg font-semibold">{t('dashboard:multilingualAdvantage')}</h3>
               <p className="text-sm opacity-90">
-                Speaking {selectedLanguages.length} languages gives you access to <strong>{formatNumber(stats.totalSpeakers)} people</strong> across <strong>{stats.countries.size} countries</strong>, covering <strong>{stats.globalCoverage.toFixed(1)}%</strong> of the global population.
+                {t('dashboard:advantageDescription', { 
+                  speakers: formatNumber(stats.totalSpeakers), 
+                  countries: stats.countries.size,
+                  coverage: stats.globalCoverage.toFixed(1)
+                })}
               </p>
             </div>
           </CardContent>

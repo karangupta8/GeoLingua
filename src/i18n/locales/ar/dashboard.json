@@ -1,0 +1,11 @@
+{
+  "selectLanguages": "اختر اللغات لترى إمكانيات التواصل العالمية",
+  "totalSpeakers": "إجمالي المتحدثين",
+  "countriesCovered": "البلدان المغطاة",
+  "globalReach": "النطاق العالمي",
+  "multilingualAdvantage": "ميزة تعدد اللغات",
+  "speakersDescription": "الأشخاص الذين يمكنك التواصل معهم",
+  "countriesDescription": "البلدان التي تُتحدث فيها لغاتك",
+  "reachDescription": "نسبة السكان العالمية",
+  "advantageDescription": "نطاقك اللغوي المدمج يمنحك وصولاً إلى {{speakers}} متحدث عبر {{countries}} دولة، مغطياً {{coverage}}% من سكان العالم."
+}

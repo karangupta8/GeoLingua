@@ -1,0 +1,15 @@
+{
+  "loading": "加载中...",
+  "error": "错误",
+  "retry": "重试",
+  "save": "保存",
+  "cancel": "取消",
+  "close": "关闭",
+  "search": "搜索",
+  "filter": "筛选",
+  "all": "全部",
+  "selected": "已选择",
+  "remove": "删除",
+  "select": "选择",
+  "deselect": "取消选择"
+}

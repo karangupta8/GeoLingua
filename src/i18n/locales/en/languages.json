@@ -1,0 +1,16 @@
+{
+  "title": "Language Selector",
+  "description": "Choose languages to analyze your global communication reach",
+  "searchPlaceholder": "Search languages...",
+  "filterBy": "Filter by",
+  "popular": "Popular",
+  "selectedLanguages": "Selected Languages",
+  "noLanguagesSelected": "No languages selected",
+  "selectLanguage": "Select this language",
+  "deselectLanguage": "Deselect this language",
+  "speakers_one": "{{count}} speaker",
+  "speakers_other": "{{count}} speakers",
+  "countries_one": "{{count}} country",
+  "countries_other": "{{count}} countries",
+  "globalReach": "{{percentage}}% global reach"
+}

@@ -1,0 +1,7 @@
+{
+  "loadingError": "Error al cargar datos. Por favor, inténtalo de nuevo.",
+  "networkError": "Error de red. Por favor, verifica tu conexión.",
+  "genericError": "Algo salió mal. Por favor, inténtalo de nuevo.",
+  "notFound": "Página no encontrada",
+  "returnHome": "Volver al Inicio"
+}

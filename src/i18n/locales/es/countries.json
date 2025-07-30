@@ -1,0 +1,13 @@
+{
+  "title": "Análisis de Países",
+  "description": "Desglose detallado de países donde se hablan tus idiomas seleccionados",
+  "noLanguagesSelected": "Selecciona idiomas para ver el análisis detallado de países y perspectivas culturales.",
+  "population": "Población",
+  "official": "Oficial",
+  "speakers": "hablantes",
+  "travelInsight": "Consejo de Viaje",
+  "highDensity": "Alta densidad de hablantes del idioma - ¡encontrarás muchas personas con quienes comunicarte!",
+  "moderateDensity": "Densidad moderada de hablantes del idioma - la comunicación básica debería ser posible.",
+  "lowDensity": "Menor densidad de hablantes del idioma - considera aprender frases locales.",
+  "culturalContext": "Contexto Cultural"
+}

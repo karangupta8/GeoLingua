@@ -1,0 +1,11 @@
+{
+  "selectLanguages": "选择语言以查看您的全球沟通潜力",
+  "totalSpeakers": "总使用人数",
+  "countriesCovered": "覆盖国家",
+  "globalReach": "全球覆盖",
+  "multilingualAdvantage": "多语言优势",
+  "speakersDescription": "您可以与之沟通的人数",
+  "countriesDescription": "使用您所选语言的国家",
+  "reachDescription": "全球人口百分比",
+  "advantageDescription": "您的综合语言覆盖使您能够接触到{{countries}}个国家的{{speakers}}使用者，覆盖全球{{coverage}}%的人口。"
+}

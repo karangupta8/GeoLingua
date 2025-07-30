@@ -1,0 +1,15 @@
+{
+  "loading": "Loading...",
+  "error": "Error",
+  "retry": "Retry",
+  "save": "Save",
+  "cancel": "Cancel",
+  "close": "Close",
+  "search": "Search",
+  "filter": "Filter",
+  "all": "All",
+  "selected": "Selected",
+  "remove": "Remove",
+  "select": "Select",
+  "deselect": "Deselect"
+}

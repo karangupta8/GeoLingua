@@ -1,0 +1,13 @@
+{
+  "title": "国家分析",
+  "description": "您所选语言使用国家的详细分析",
+  "noLanguagesSelected": "选择语言以查看详细的国家分析和文化见解。",
+  "population": "人口",
+  "official": "官方语言",
+  "speakers": "使用者",
+  "travelInsight": "旅行建议",
+  "highDensity": "语言使用者密度高 - 您会发现许多可以沟通的人！",
+  "moderateDensity": "语言使用者密度适中 - 基本沟通应该是可能的。",
+  "lowDensity": "语言使用者密度较低 - 建议学习当地短语。",
+  "culturalContext": "文化背景"
+}

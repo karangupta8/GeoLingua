@@ -1,0 +1,13 @@
+{
+  "title": "Country Analysis",
+  "description": "Detailed breakdown of countries where your selected languages are spoken",
+  "noLanguagesSelected": "Select languages to see detailed country analysis and cultural insights.",
+  "population": "Population",
+  "official": "Official",
+  "speakers": "speakers",
+  "travelInsight": "Travel Insight",
+  "highDensity": "High language speaker density - you'll find many people to communicate with!",
+  "moderateDensity": "Moderate language speaker density - basic communication should be possible.",
+  "lowDensity": "Lower language speaker density - consider learning local phrases.",
+  "culturalContext": "Cultural Context"
+}

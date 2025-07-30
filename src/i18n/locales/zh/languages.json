@@ -1,0 +1,16 @@
+{
+  "title": "语言选择器",
+  "description": "选择语言以分析您的全球沟通覆盖范围",
+  "searchPlaceholder": "搜索语言...",
+  "filterBy": "筛选方式",
+  "popular": "热门",
+  "selectedLanguages": "已选择的语言",
+  "noLanguagesSelected": "未选择语言",
+  "selectLanguage": "选择此语言",
+  "deselectLanguage": "取消选择此语言",
+  "speakers_one": "{{count}} 使用者",
+  "speakers_other": "{{count}} 使用者",
+  "countries_one": "{{count}} 个国家",
+  "countries_other": "{{count}} 个国家",
+  "globalReach": "{{percentage}}% 全球覆盖"
+}

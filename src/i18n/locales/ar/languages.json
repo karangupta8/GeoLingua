@@ -1,0 +1,16 @@
+{
+  "title": "منتقي اللغات",
+  "description": "اختر اللغات لتحليل نطاق تواصلك العالمي",
+  "searchPlaceholder": "البحث عن اللغات...",
+  "filterBy": "تصفية حسب",
+  "popular": "الشائعة",
+  "selectedLanguages": "اللغات المختارة",
+  "noLanguagesSelected": "لم يتم اختيار أي لغات",
+  "selectLanguage": "اختيار هذه اللغة",
+  "deselectLanguage": "إلغاء اختيار هذه اللغة",
+  "speakers_one": "{{count}} متحدث",
+  "speakers_other": "{{count}} متحدث",
+  "countries_one": "{{count}} دولة",
+  "countries_other": "{{count}} دولة",
+  "globalReach": "{{percentage}}% نطاق عالمي"
+}

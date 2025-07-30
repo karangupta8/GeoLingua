@@ -1,0 +1,15 @@
+{
+  "loading": "Chargement...",
+  "error": "Erreur",
+  "retry": "Réessayer",
+  "save": "Enregistrer",
+  "cancel": "Annuler",
+  "close": "Fermer",
+  "search": "Rechercher",
+  "filter": "Filtrer",
+  "all": "Tous",
+  "selected": "Sélectionnés",
+  "remove": "Supprimer",
+  "select": "Sélectionner",
+  "deselect": "Désélectionner"
+}

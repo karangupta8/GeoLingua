@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import LanguageSelector from '@/components/LanguageSelector';
 import StatsDashboard from '@/components/StatsDashboard';
@@ -6,8 +7,10 @@ import WorldMap from '@/components/WorldMap';
 import CountryBreakdown from '@/components/CountryBreakdown';
 import { Globe, BarChart3, Map, Users } from 'lucide-react';
 import Globe3D from '@/components/Globe3D';
+import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 
 const Index = () => {
+  const { t } = useTranslation(['hero', 'navigation']);
   const [selectedLanguages, setSelectedLanguages] = React.useState<string[]>([]);
 
   const handleLanguageToggle = (languageId: string) => {
@@ -20,6 +23,13 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-background">
+      {/* Header with Language Switcher */}
+      <div className="container mx-auto px-4 py-4">
+        <div className="flex justify-end">
+          <LanguageSwitcher />
+        </div>
+      </div>
+
       {/* Modern Hero Section */}
       <div className="bg-gradient-to-br from-blue-50 via-purple-50 to-indigo-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 rounded-3xl mx-4 mt-4 mb-8 overflow-hidden shadow-2xl">
         <div className="container mx-auto px-6 py-16">
@@ -27,24 +37,19 @@ const Index = () => {
             {/* Left Side - Content */}
             <div className="space-y-8">
               <div className="space-y-4">
-                <h1 className="text-5xl lg:text-6xl font-bold leading-tight">
-                  <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
-                    GeoLingua
-                  </span>
-                  <br />
-                  <span className="text-foreground text-4xl lg:text-5xl">
-                    Discover Your Global Communication Power
-                  </span>
-                </h1>
-                
-                <div className="space-y-4 text-lg text-muted-foreground max-w-xl">
-                  <p className="font-medium">Answer these questions:</p>
-                  <div className="space-y-2">
-                    <p>• Pick a language and instantly see how many people you can connect with</p>
-                    <p>• Explore the languages of the world and their global influence</p>
-                    <p>• See where your words can take you across the world</p>
-                  </div>
-                </div>
+                 <h1 className="text-5xl lg:text-6xl font-bold leading-tight">
+                   <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
+                     GeoLingua
+                   </span>
+                   <br />
+                   <span className="text-foreground text-4xl lg:text-5xl">
+                     {t('hero:title')}
+                   </span>
+                 </h1>
+                 
+                 <div className="space-y-4 text-lg text-muted-foreground max-w-xl">
+                   <p>{t('hero:subtitle')}</p>
+                 </div>
               </div>
               
               <div className="flex flex-col sm:flex-row gap-4">
@@ -103,19 +108,19 @@ const Index = () => {
               <TabsList className="grid w-full grid-cols-4 bg-card">
                 <TabsTrigger value="overview" className="flex items-center space-x-2">
                   <BarChart3 className="w-4 h-4" />
-                  <span className="hidden sm:inline">Overview</span>
+                  <span className="hidden sm:inline">{t('navigation:insights')}</span>
                 </TabsTrigger>
                 <TabsTrigger value="map" className="flex items-center space-x-2">
                   <Map className="w-4 h-4" />
-                  <span className="hidden sm:inline">Map</span>
+                  <span className="hidden sm:inline">{t('navigation:map')}</span>
                 </TabsTrigger>
                 <TabsTrigger value="countries" className="flex items-center space-x-2">
                   <Users className="w-4 h-4" />
-                  <span className="hidden sm:inline">Countries</span>
+                  <span className="hidden sm:inline">{t('navigation:breakdown')}</span>
                 </TabsTrigger>
                 <TabsTrigger value="insights" className="flex items-center space-x-2">
                   <Globe className="w-4 h-4" />
-                  <span className="hidden sm:inline">Insights</span>
+                  <span className="hidden sm:inline">{t('navigation:languageSelector')}</span>
                 </TabsTrigger>
               </TabsList>
 
