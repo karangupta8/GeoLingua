@@ -40,7 +40,6 @@ class LanguageService {
     const languages = await this.fetchLanguages();
     const allCountries = new Set<string>();
     const countryPopulations = new Map<string, number>();
-    let totalSpeakers = 0;
 
     selectedLanguages.forEach(langId => {
       const language = languages.find(lang => lang.id === langId);
@@ -52,14 +51,13 @@ class LanguageService {
           const existingPopulation = countryPopulations.get(country.code) || 0;
           countryPopulations.set(country.code, Math.max(existingPopulation, reachablePopulation));
         });
-        totalSpeakers += language.totalSpeakers;
       }
     });
 
-    // Calculate actual global coverage based on unique population reached
-    const totalReachablePopulation = Array.from(countryPopulations.values()).reduce((sum, pop) => sum + pop, 0);
+    // Calculate actual total speakers based on unique population reached
+    const totalSpeakers = Array.from(countryPopulations.values()).reduce((sum, pop) => sum + pop, 0);
     const worldPopulation = 8000000000; // Approximate current world population
-    const globalCoverage = Math.min((totalReachablePopulation / worldPopulation) * 100, 100);
+    const globalCoverage = Math.min((totalSpeakers / worldPopulation) * 100, 100);
 
     return {
       totalSpeakers,
