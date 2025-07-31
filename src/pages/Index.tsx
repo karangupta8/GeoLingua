@@ -5,7 +5,7 @@ import StatsDashboard from '@/components/StatsDashboard';
 import WorldMap from '@/components/WorldMap';
 import CountryBreakdown from '@/components/CountryBreakdown';
 import { Globe } from 'lucide-react';
-import Globe3D from '@/components/Globe3D';
+import MapboxHeatmap from '@/components/MapboxHeatmap';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 
 const Index = () => {
@@ -108,12 +108,12 @@ const Index = () => {
               <StatsDashboard selectedLanguages={selectedLanguages} />
             </div>
 
-            {/* 3D Globe Section */}
+            {/* Interactive Heatmap Section */}
             <div className="space-y-4">
               <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
-                🌍 Interactive Globe
+                🗺️ Language Distribution Heatmap
               </h2>
-              <Globe3D selectedLanguages={selectedLanguages} />
+              <MapboxHeatmap selectedLanguages={selectedLanguages} />
             </div>
 
             {/* Country Breakdown Section */}
