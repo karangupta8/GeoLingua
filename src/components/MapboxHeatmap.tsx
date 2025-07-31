@@ -52,6 +52,20 @@ const MapboxHeatmap: React.FC<MapboxHeatmapProps> = ({ selectedLanguages }) => {
       'top-right'
     );
 
+    // Ensure proper centering on initial load
+    map.current.on('load', () => {
+      if (map.current) {
+        // Force center the map to ensure it's properly positioned
+        map.current.easeTo({
+          center: DEFAULT_MAP_CONFIG.center,
+          zoom: DEFAULT_MAP_CONFIG.zoom,
+          bearing: DEFAULT_MAP_CONFIG.bearing,
+          pitch: mapStyle === 'globe' ? DEFAULT_MAP_CONFIG.pitch : 0,
+          duration: 0, // Instant centering
+        });
+      }
+    });
+
     // Add atmosphere for globe mode
     if (mapStyle === 'globe') {
       map.current.on('style.load', () => {
@@ -94,101 +108,154 @@ const MapboxHeatmap: React.FC<MapboxHeatmapProps> = ({ selectedLanguages }) => {
 
   // Update heatmap data when languages change
   useEffect(() => {
-    if (!map.current || !languages.length || !selectedLanguages.length) return;
+    if (!map.current || !languages.length) return;
 
-    const heatmapData = processLanguageDataForHeatmap(languages, selectedLanguages);
-    const geoJsonFeatures = generateGeoJSONFeatures(heatmapData.countries);
-
-    map.current.on('load', () => {
-      if (!map.current) return;
-
-      // Remove existing sources and layers
-      if (map.current.getSource('language-heatmap')) {
+    // If no languages are selected, clear the map data
+    if (!selectedLanguages.length) {
+      if (map.current && map.current.getSource('language-heatmap')) {
         map.current.removeLayer('heatmap-layer');
         map.current.removeLayer('country-points');
         map.current.removeSource('language-heatmap');
       }
+      return;
+    }
 
-      // Add new data source
-      map.current.addSource('language-heatmap', {
-        type: 'geojson',
-        data: {
-          type: 'FeatureCollection',
-          features: geoJsonFeatures,
-        },
-      });
+    console.log('Updating map data for languages:', selectedLanguages);
 
-      // Add heatmap layer
-      map.current.addLayer({
-        id: 'heatmap-layer',
-        type: 'heatmap',
-        source: 'language-heatmap',
-        paint: {
-          'heatmap-weight': [
-            'interpolate',
-            ['linear'],
-            ['get', 'intensity'],
-            0, 0,
-            100, 1
-          ],
-          'heatmap-intensity': [
-            'interpolate',
-            ['linear'],
-            ['zoom'],
-            0, 1,
-            9, 3
-          ],
-          'heatmap-color': [
-            'interpolate',
-            ['linear'],
-            ['heatmap-density'],
-            0, 'rgba(33,102,172,0)',
-            0.2, 'rgb(103,169,207)',
-            0.4, 'rgb(209,229,240)',
-            0.6, 'rgb(253,219,199)',
-            0.8, 'rgb(239,138,98)',
-            1, 'rgb(178,24,43)'
-          ],
-          'heatmap-radius': [
-            'interpolate',
-            ['linear'],
-            ['zoom'],
-            0, 20,
-            9, 40
-          ],
-        },
-      });
+    const heatmapData = processLanguageDataForHeatmap(languages, selectedLanguages);
+    const geoJsonFeatures = generateGeoJSONFeatures(heatmapData.countries);
 
-      // Add country points for detailed view
-      map.current.addLayer({
-        id: 'country-points',
-        type: 'circle',
-        source: 'language-heatmap',
-        paint: {
-          'circle-radius': [
-            'interpolate',
-            ['linear'],
-            ['get', 'intensity'],
-            0, 4,
-            100, 20
-          ],
-          'circle-color': [
-            'interpolate',
-            ['linear'],
-            ['get', 'intensity'],
-            0, '#FEF3C7',
-            25, '#FBBF24',
-            50, '#F59E0B',
-            75, '#DC2626',
-            100, '#7C2D12'
-          ],
-          'circle-opacity': 0.8,
-          'circle-stroke-width': 2,
-          'circle-stroke-color': '#FFFFFF',
-        },
-      });
+    console.log('Generated features:', geoJsonFeatures.length);
 
-      // Add hover effects
+    // Don't proceed if no data
+    if (geoJsonFeatures.length === 0) {
+      console.warn('No GeoJSON features generated for selected languages');
+      return;
+    }
+
+    const updateMapData = () => {
+      if (!map.current) return;
+
+      try {
+        console.log('Updating map layers...');
+        
+        // Remove existing sources and layers
+        if (map.current.getSource('language-heatmap')) {
+          map.current.removeLayer('heatmap-layer');
+          map.current.removeLayer('country-points');
+          map.current.removeSource('language-heatmap');
+        }
+
+        // Add new data source
+        map.current.addSource('language-heatmap', {
+          type: 'geojson',
+          data: {
+            type: 'FeatureCollection',
+            features: geoJsonFeatures,
+          },
+        });
+
+        // Add heatmap layer
+        map.current.addLayer({
+          id: 'heatmap-layer',
+          type: 'heatmap',
+          source: 'language-heatmap',
+          paint: {
+            'heatmap-weight': [
+              'interpolate',
+              ['linear'],
+              ['get', 'intensity'],
+              0, 0,
+              100, 1
+            ],
+            'heatmap-intensity': [
+              'interpolate',
+              ['linear'],
+              ['zoom'],
+              0, 1,
+              9, 3
+            ],
+            'heatmap-color': [
+              'interpolate',
+              ['linear'],
+              ['heatmap-density'],
+              0, 'rgba(33,102,172,0)',
+              0.2, 'rgb(103,169,207)',
+              0.4, 'rgb(209,229,240)',
+              0.6, 'rgb(253,219,199)',
+              0.8, 'rgb(239,138,98)',
+              1, 'rgb(178,24,43)'
+            ],
+            'heatmap-radius': [
+              'interpolate',
+              ['linear'],
+              ['zoom'],
+              0, 20,
+              9, 40
+            ],
+          },
+        });
+
+        // Add country points for detailed view
+        map.current.addLayer({
+          id: 'country-points',
+          type: 'circle',
+          source: 'language-heatmap',
+          paint: {
+            'circle-radius': [
+              'interpolate',
+              ['linear'],
+              ['get', 'intensity'],
+              0, 4,
+              100, 20
+            ],
+            'circle-color': [
+              'interpolate',
+              ['linear'],
+              ['get', 'intensity'],
+              0, '#FEF3C7',
+              25, '#FBBF24',
+              50, '#F59E0B',
+              75, '#DC2626',
+              100, '#7C2D12'
+            ],
+            'circle-opacity': 0.8,
+            'circle-stroke-width': 2,
+            'circle-stroke-color': '#FFFFFF',
+          },
+        });
+
+        console.log('Map data updated successfully');
+      } catch (error) {
+        console.error('Error updating map data:', error);
+      }
+    };
+
+    // Force update the map data regardless of load state
+    if (map.current.isStyleLoaded()) {
+      updateMapData();
+    } else {
+      // If map isn't loaded yet, wait for it and then update
+      const handleMapLoad = () => {
+        updateMapData();
+        map.current?.off('load', handleMapLoad);
+      };
+      map.current.on('load', handleMapLoad);
+    }
+
+  }, [languages, selectedLanguages]);
+
+  // Separate useEffect for hover effects
+  useEffect(() => {
+    if (!map.current || !languages.length) return;
+
+    const addHoverEffects = () => {
+      if (!map.current) return;
+
+      // Remove existing event listeners to prevent duplicates
+      map.current.off('mouseenter', 'country-points');
+      map.current.off('mouseleave', 'country-points');
+
       map.current.on('mouseenter', 'country-points', (e) => {
         if (!map.current) return;
         map.current.getCanvas().style.cursor = 'pointer';
@@ -208,10 +275,13 @@ const MapboxHeatmap: React.FC<MapboxHeatmapProps> = ({ selectedLanguages }) => {
             });
           }
 
-          const languageNames = countryLanguages.map((langId: string) => {
-            const lang = languages.find(l => l.id === langId);
-            return lang?.name || langId;
-          }).join(', ');
+          // Fix: Ensure countryLanguages is an array before calling map
+          const languageNames = Array.isArray(countryLanguages) 
+            ? countryLanguages.map((langId: string) => {
+                const lang = languages.find(l => l.id === langId);
+                return lang?.name || langId;
+              }).join(', ')
+            : 'Unknown';
 
           popup.current
             .setLngLat((feature.geometry as any).coordinates)
@@ -238,16 +308,68 @@ const MapboxHeatmap: React.FC<MapboxHeatmapProps> = ({ selectedLanguages }) => {
           popup.current.remove();
         }
       });
-    });
+    };
 
-    // If map is already loaded, trigger the load event
+    // Add hover effects when map is ready
     if (map.current.isStyleLoaded()) {
-      map.current.fire('load');
+      addHoverEffects();
+    } else {
+      map.current.once('load', addHoverEffects);
     }
-  }, [languages, selectedLanguages, t]);
+
+    // Cleanup function to remove event listeners
+    return () => {
+      if (map.current) {
+        map.current.off('mouseenter', 'country-points');
+        map.current.off('mouseleave', 'country-points');
+      }
+    };
+  }, [languages, t]);
+
+  // Helper function to get the center of a polygon
+  function getPolygonCenter(geometry: any): [number, number] {
+    if (geometry.type === 'Point') {
+      return geometry.coordinates;
+    }
+    
+    if (geometry.type === 'Polygon') {
+      const coordinates = geometry.coordinates[0];
+      const center = coordinates.reduce(
+        (acc: [number, number], coord: [number, number]) => [
+          acc[0] + coord[0],
+          acc[1] + coord[1]
+        ],
+        [0, 0]
+      );
+      return [center[0] / coordinates.length, center[1] / coordinates.length];
+    }
+    
+    if (geometry.type === 'MultiPolygon') {
+      return getPolygonCenter({ type: 'Polygon', coordinates: geometry.coordinates[0] });
+    }
+    
+    return [0, 0]; // fallback
+  }
 
   const toggleMapStyle = () => {
     setMapStyle(prev => prev === 'globe' ? 'flat' : 'globe');
+    // Force a re-render of the map when style changes
+    if (map.current) {
+      // Trigger the data update effect by forcing a re-render
+      setTimeout(() => {
+        if (map.current && languages.length && selectedLanguages.length) {
+          const heatmapData = processLanguageDataForHeatmap(languages, selectedLanguages);
+          const geoJsonFeatures = generateGeoJSONFeatures(heatmapData.countries);
+          
+          if (map.current.getSource('language-heatmap')) {
+            (map.current.getSource('language-heatmap') as any).setData({
+              type: 'FeatureCollection',
+              features: geoJsonFeatures,
+            });
+          }
+        }
+      }, 100);
+    }
   };
 
   const resetRotation = () => {
@@ -357,7 +479,7 @@ const MapboxHeatmap: React.FC<MapboxHeatmapProps> = ({ selectedLanguages }) => {
       <Card className="overflow-hidden">
         <div 
           ref={mapContainer} 
-          className="w-full aspect-video min-h-[400px] rounded-lg"
+          className="w-full h-[600px] rounded-lg"
         />
       </Card>
 

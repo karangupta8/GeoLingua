@@ -13,6 +13,49 @@ interface LanguageSelectorProps {
   onLanguageToggle: (languageId: string) => void;
 }
 
+// Color palette for languages
+const LANGUAGE_COLORS = [
+  '#3B82F6', // Blue
+  '#EF4444', // Red
+  '#10B981', // Green
+  '#F59E0B', // Yellow
+  '#8B5CF6', // Purple
+  '#EC4899', // Pink
+  '#06B6D4', // Cyan
+  '#84CC16', // Lime
+  '#F97316', // Orange
+  '#A855F7', // Violet
+  '#F43F5E', // Rose
+  '#22C55E', // Emerald
+  '#EAB308', // Amber
+  '#6366F1', // Indigo
+  '#14B8A6', // Teal
+  '#F59E0B', // Yellow
+  '#8B5CF6', // Purple
+  '#EC4899', // Pink
+  '#06B6D4', // Cyan
+  '#84CC16', // Lime
+  '#F97316', // Orange
+  '#A855F7', // Violet
+  '#F43F5E', // Rose
+  '#22C55E', // Emerald
+];
+
+// Function to get color for a language
+const getLanguageColor = (languageId: string, languageIndex: number): string => {
+  // Try to use CSS custom property first (for languages that have them defined)
+  const cssColor = getComputedStyle(document.documentElement)
+    .getPropertyValue(`--language-${languageId}`)
+    .trim();
+  
+  if (cssColor) {
+    return `hsl(${cssColor})`;
+  }
+  
+  // Fall back to the color palette
+  return LANGUAGE_COLORS[languageIndex % LANGUAGE_COLORS.length];
+};
+
 const LanguageSelector: React.FC<LanguageSelectorProps> = ({
   selectedLanguages,
   onLanguageToggle
@@ -139,8 +182,9 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
       <CardContent className="space-y-4">
         <h4 className="font-medium text-sm text-muted-foreground">Available Languages</h4>
         <div className="space-y-3 max-h-96 overflow-y-auto">
-          {filteredLanguages.map((language: LanguageData) => {
+          {filteredLanguages.map((language: LanguageData, index: number) => {
             const isSelected = selectedLanguages.includes(language.id);
+            const languageColor = getLanguageColor(language.id, index);
 
             return (
               <div
@@ -157,8 +201,8 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
                     <div 
-                      className={`w-4 h-4 rounded-full bg-${language.color}`}
-                      style={{ backgroundColor: `hsl(var(--${language.color}))` }}
+                      className="w-4 h-4 rounded-full"
+                      style={{ backgroundColor: languageColor }}
                     />
                     <div>
                       <h4 className="font-semibold text-foreground">{language.name}</h4>

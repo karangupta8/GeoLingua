@@ -48,6 +48,40 @@ const COUNTRY_COORDINATES: Record<string, [number, number]> = {
   ST: [6.6071, 0.1864],
   TL: [125.7275, -8.8742],
   MO: [113.5439, 22.1987],
+  NG: [8.6753, 9.0820], // Nigeria
+  ZA: [24.9916, -30.5595], // South Africa
+  VE: [-66.5897, 6.42375], // Venezuela
+  CD: [21.7587, -4.0383], // Democratic Republic of Congo
+  SN: [-14.4524, 14.4974], // Senegal
+  FJ: [178.1165, -17.7134], // Fiji
+  NP: [84.1240, 28.3949], // Nepal
+  BD: [90.3563, 23.6850], // Bangladesh
+  RU: [105.3188, 61.5240], // Russia
+  BY: [27.9534, 53.7098], // Belarus
+  KZ: [66.9237, 48.0196], // Kazakhstan
+  UA: [31.1656, 48.3794], // Ukraine
+  DE: [10.4515, 51.1657], // Germany
+  AT: [14.5501, 47.5162], // Austria
+  JP: [138.2529, 36.2048], // Japan
+  KP: [127.5101, 40.3399], // North Korea
+  KR: [127.7669, 35.9078], // South Korea
+  PK: [69.3451, 30.3753], // Pakistan
+  PL: [19.1451, 51.9194], // Poland
+  NL: [5.2913, 52.1326], // Netherlands
+  SR: [-56.0278, 3.9193], // Suriname
+  ID: [113.9213, -0.7893], // Indonesia
+  TR: [35.2433, 38.9637], // Turkey
+  CY: [33.4299, 35.1264], // Cyprus
+  VN: [108.2772, 14.0583], // Vietnam
+  IR: [53.6880, 32.4279], // Iran
+  AF: [67.7100, 33.9391], // Afghanistan
+  TJ: [71.2761, 38.5358], // Tajikistan
+  TH: [101.1801, 15.8700], // Thailand
+  LK: [80.7718, 7.8731], // Sri Lanka
+  KE: [37.9062, -0.0236], // Kenya
+  TZ: [34.8888, -6.3690], // Tanzania
+  UG: [32.2903, 1.3733], // Uganda
+  IT: [12.5674, 41.8719], // Italy
 };
 
 export interface ProcessedCountryData {
@@ -73,7 +107,13 @@ export function processLanguageDataForHeatmap(
   selectedLanguageIds: string[]
 ): HeatmapData {
   const countryDataMap = new Map<string, ProcessedCountryData>();
-  const allLanguageColors = ['#3B82F6', '#EF4444', '#10B981', '#F59E0B', '#8B5CF6', '#EC4899'];
+  // Expanded color palette to support more languages
+  const allLanguageColors = [
+    '#3B82F6', '#EF4444', '#10B981', '#F59E0B', '#8B5CF6', '#EC4899',
+    '#06B6D4', '#84CC16', '#F97316', '#A855F7', '#F43F5E', '#22C55E',
+    '#EAB308', '#6366F1', '#14B8A6', '#F59E0B', '#8B5CF6', '#EC4899',
+    '#06B6D4', '#84CC16', '#F97316', '#A855F7', '#F43F5E', '#22C55E'
+  ];
   
   let maxIntensity = 0;
 
