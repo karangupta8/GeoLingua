@@ -64,10 +64,9 @@
 
 ## 🎥 Demo
 
-![GeoTime Demo](./readme_assets/demo.png)
-
-![Event Popup](./readme_assets/insights.png)
-
+![landing_page](readme_assets/landing_page.png)
+![demo](readme_assets/demo.png)
+![insights](readme_assets/insights.png)
 
 ## 🔮 **Future Roadmap and Potential Features**
 
