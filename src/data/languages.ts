@@ -18,7 +18,7 @@ export interface CountryInfo {
 }
 
 export const languages: LanguageData[] = [
-  {
+    {
     id: "english",
     name: "English",
     color: "language-english",
@@ -30,11 +30,17 @@ export const languages: LanguageData[] = [
       { code: "GB", name: "United Kingdom", speakerPercentage: 98, isOfficial: true, population: 67000000, culturalNotes: "Native English-speaking country" },
       { code: "CA", name: "Canada", speakerPercentage: 86, isOfficial: true, population: 38000000, culturalNotes: "Official language alongside French" },
       { code: "AU", name: "Australia", speakerPercentage: 96, isOfficial: true, population: 26000000, culturalNotes: "Primary language across the continent" },
-      { code: "IN", name: "India", speakerPercentage: 12, isOfficial: true, population: 1400000000, culturalNotes: "Widely used in business and education" },
+      { code: "NZ", name: "New Zealand", speakerPercentage: 95, isOfficial: true, population: 5100000, culturalNotes: "Primary language, with Māori and NZ Sign Language also official" },
+      { code: "IE", name: "Ireland", speakerPercentage: 97, isOfficial: true, population: 5000000, culturalNotes: "Official language alongside Irish (Gaeilge)" },
+      { code: "IN", name: "India", speakerPercentage: 12, isOfficial: true, population: 1400000000, culturalNotes: "Widely used in business and higher education" },
+      { code: "PK", name: "Pakistan", speakerPercentage: 48, isOfficial: true, population: 225000000, culturalNotes: "Official language used in government and by the elite, alongside Urdu" },
       { code: "NG", name: "Nigeria", speakerPercentage: 53, isOfficial: true, population: 220000000, culturalNotes: "Official language, unifying diverse ethnic groups" },
-      { code: "ZA", name: "South Africa", speakerPercentage: 13, isOfficial: true, population: 60000000, culturalNotes: "One of 11 official languages" },
+      { code: "PH", name: "Philippines", speakerPercentage: 92, isOfficial: true, population: 113000000, culturalNotes: "Co-official with Filipino; used in government, media, and education" },
+      { code: "ZA", name: "South Africa", speakerPercentage: 13, isOfficial: true, population: 60000000, culturalNotes: "One of 11 official languages, acts as a lingua franca" },
+      { code: "SG", name: "Singapore", speakerPercentage: 83, isOfficial: true, population: 5900000, culturalNotes: "One of four official languages, serves as the primary language of business" },
+      { code: "JM", name: "Jamaica", speakerPercentage: 99, isOfficial: true, population: 2900000, culturalNotes: "The official language, though most daily conversation is in Jamaican Patois" }
     ]
-  },
+  },  
   {
     id: "spanish",
     name: "Spanish",
