@@ -40,3 +40,19 @@
 .read-the-docs {
   color: #888;
 }
+
+.country-popup {
+  z-index: 1000;
+}
+
+.country-popup .mapboxgl-popup-content {
+  background: rgba(0, 0, 0, 0.9);
+  color: white;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.country-popup .mapboxgl-popup-tip {
+  border-top-color: rgba(0, 0, 0, 0.9);
+}

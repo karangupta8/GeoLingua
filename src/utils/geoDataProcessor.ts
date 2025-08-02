@@ -184,6 +184,60 @@ function generateColorScale(maxIntensity: number): string[] {
     .map(range => range.color);
 }
 
+export function generateCountryPolygonFeatures(
+  countries: ProcessedCountryData[], 
+  countryBordersGeoJSON: any
+) {
+  const countryDataMap = new Map<string, ProcessedCountryData>();
+  
+  // Create a map of country data by code for quick lookup
+  countries.forEach(country => {
+    countryDataMap.set(country.code, country);
+  });
+
+  console.log('Available country codes in language data:', Array.from(countryDataMap.keys()));
+  console.log('Sample country borders features:', countryBordersGeoJSON.features.slice(0, 5).map((f: any) => ({
+    name: f.properties.name,
+    code: f.properties['ISO3166-1-Alpha-2']
+  })));
+
+  // Filter and transform the country borders GeoJSON to only include countries with language data
+  const features = countryBordersGeoJSON.features
+    .filter((feature: any) => {
+      const countryCode = feature.properties['ISO3166-1-Alpha-2'];
+      const hasData = countryDataMap.has(countryCode);
+      if (!hasData && countryCode !== '-99') {
+        console.log(`No language data for country: ${feature.properties.name} (${countryCode})`);
+      }
+      return hasData;
+    })
+    .map((feature: any) => {
+      const countryCode = feature.properties['ISO3166-1-Alpha-2'];
+      const countryData = countryDataMap.get(countryCode);
+      
+      if (!countryData) return null;
+
+      return {
+        type: 'Feature' as const,
+        properties: {
+          code: countryData.code,
+          name: countryData.name,
+          speakerPercentage: countryData.speakerPercentage,
+          isOfficial: countryData.isOfficial,
+          population: countryData.population,
+          languages: countryData.languages,
+          intensity: countryData.intensity,
+          color: countryData.color,
+        },
+        geometry: feature.geometry,
+      };
+    })
+    .filter(Boolean); // Remove null entries
+
+  console.log(`Generated ${features.length} country polygon features`);
+  return features;
+}
+
 export function generateGeoJSONFeatures(countries: ProcessedCountryData[]) {
   return countries.map(country => ({
     type: 'Feature' as const,
