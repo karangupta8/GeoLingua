@@ -186,7 +186,8 @@ function generateColorScale(maxIntensity: number): string[] {
 
 export function generateCountryPolygonFeatures(
   countries: ProcessedCountryData[], 
-  countryBordersGeoJSON: any
+  countryBordersGeoJSON: any,
+  includeAllCountries: boolean = false
 ) {
   const countryDataMap = new Map<string, ProcessedCountryData>();
   
@@ -196,41 +197,53 @@ export function generateCountryPolygonFeatures(
   });
 
   console.log('Available country codes in language data:', Array.from(countryDataMap.keys()));
-  console.log('Sample country borders features:', countryBordersGeoJSON.features.slice(0, 5).map((f: any) => ({
-    name: f.properties.name,
-    code: f.properties['ISO3166-1-Alpha-2']
-  })));
 
-  // Filter and transform the country borders GeoJSON to only include countries with language data
+  // Filter and transform the country borders GeoJSON
   const features = countryBordersGeoJSON.features
     .filter((feature: any) => {
       const countryCode = feature.properties['ISO3166-1-Alpha-2'];
-      const hasData = countryDataMap.has(countryCode);
-      if (!hasData && countryCode !== '-99') {
-        console.log(`No language data for country: ${feature.properties.name} (${countryCode})`);
-      }
-      return hasData;
+      // Skip invalid country codes
+      return countryCode !== '-99';
     })
     .map((feature: any) => {
       const countryCode = feature.properties['ISO3166-1-Alpha-2'];
       const countryData = countryDataMap.get(countryCode);
       
-      if (!countryData) return null;
-
-      return {
-        type: 'Feature' as const,
-        properties: {
-          code: countryData.code,
-          name: countryData.name,
-          speakerPercentage: countryData.speakerPercentage,
-          isOfficial: countryData.isOfficial,
-          population: countryData.population,
-          languages: countryData.languages,
-          intensity: countryData.intensity,
-          color: countryData.color,
-        },
-        geometry: feature.geometry,
-      };
+      if (countryData) {
+        // Country has language data
+        return {
+          type: 'Feature' as const,
+          properties: {
+            code: countryData.code,
+            name: countryData.name,
+            speakerPercentage: countryData.speakerPercentage,
+            isOfficial: countryData.isOfficial,
+            population: countryData.population,
+            languages: countryData.languages,
+            intensity: countryData.intensity,
+            color: countryData.color,
+          },
+          geometry: feature.geometry,
+        };
+      } else if (includeAllCountries) {
+        // Country has no language data but we want to include it
+        return {
+          type: 'Feature' as const,
+          properties: {
+            code: countryCode,
+            name: feature.properties.name,
+            speakerPercentage: 0,
+            isOfficial: false,
+            population: 0,
+            languages: [],
+            intensity: 0,
+            color: '#E5E7EB', // Light gray for countries without data
+          },
+          geometry: feature.geometry,
+        };
+      }
+      
+      return null;
     })
     .filter(Boolean); // Remove null entries
 

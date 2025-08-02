@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { Card } from '@/components/ui/card';
@@ -25,12 +25,130 @@ const MapboxHeatmap: React.FC<MapboxHeatmapProps> = ({ selectedLanguages }) => {
   const [mapStyle, setMapStyle] = useState<'globe' | 'flat'>('globe');
   const [hoveredCountry, setHoveredCountry] = useState<string | null>(null);
   const [isRotating, setIsRotating] = useState(true);
+  const [mapLoaded, setMapLoaded] = useState(false);
+  const [mapDataLoaded, setMapDataLoaded] = useState(false);
 
   // Check if Mapbox token is configured
   const isMapboxConfigured = MAPBOX_ACCESS_TOKEN && MAPBOX_ACCESS_TOKEN !== 'your-mapbox-access-token-here';
 
+  // Memoized function to update map data
+  const updateMapData = useCallback(() => {
+    if (!map.current || !languages.length || !mapLoaded) {
+      console.log('Map data update skipped:', { 
+        mapExists: !!map.current, 
+        languagesCount: languages.length, 
+        mapLoaded 
+      });
+      return;
+    }
+
+    // If no languages are selected, clear the map data
+    if (!selectedLanguages.length) {
+      console.log('Clearing map data - no languages selected');
+      if (map.current && map.current.getSource('country-heatmap')) {
+        try {
+          map.current.removeLayer('country-fill-layer');
+          map.current.removeLayer('country-border-layer');
+          map.current.removeSource('country-heatmap');
+        } catch (error) {
+          console.warn('Error clearing map data:', error);
+        }
+      }
+      setMapDataLoaded(false);
+      return;
+    }
+
+    console.log('Updating map data for languages:', selectedLanguages);
+
+    try {
+      const heatmapData = processLanguageDataForHeatmap(languages, selectedLanguages);
+      const countryPolygonFeatures = generateCountryPolygonFeatures(heatmapData.countries, countryBorders);
+
+      console.log('Generated country polygon features:', countryPolygonFeatures.length);
+
+      // Don't proceed if no data
+      if (countryPolygonFeatures.length === 0) {
+        console.warn('No country polygon features generated for selected languages');
+        setMapDataLoaded(false);
+        return;
+      }
+
+      // Remove existing sources and layers
+      if (map.current.getSource('country-heatmap')) {
+        try {
+          map.current.removeLayer('country-fill-layer');
+          map.current.removeLayer('country-border-layer');
+          map.current.removeSource('country-heatmap');
+        } catch (error) {
+          console.warn('Error removing existing layers:', error);
+        }
+      }
+
+      // Add new data source
+      map.current.addSource('country-heatmap', {
+        type: 'geojson',
+        data: {
+          type: 'FeatureCollection',
+          features: countryPolygonFeatures,
+        },
+      });
+
+      // Add country fill layer (the heatmap)
+      map.current.addLayer({
+        id: 'country-fill-layer',
+        type: 'fill',
+        source: 'country-heatmap',
+        paint: {
+          'fill-color': [
+            'interpolate',
+            ['linear'],
+            ['get', 'intensity'],
+            0, '#FEF3C7',    // Very light yellow
+            25, '#FBBF24',   // Yellow
+            50, '#F59E0B',   // Orange
+            75, '#DC2626',   // Red
+            100, '#7C2D12'   // Dark red
+          ],
+          'fill-opacity': [
+            'interpolate',
+            ['linear'],
+            ['get', 'intensity'],
+            0, 0.3,
+            25, 0.5,
+            50, 0.7,
+            75, 0.8,
+            100, 0.9
+          ],
+        },
+      });
+
+      // Add country border layer
+      map.current.addLayer({
+        id: 'country-border-layer',
+        type: 'line',
+        source: 'country-heatmap',
+        paint: {
+          'line-color': '#FFFFFF',
+          'line-width': 1,
+          'line-opacity': 0.6,
+        },
+      });
+
+      console.log('Map data updated successfully');
+      setMapDataLoaded(true);
+    } catch (error) {
+      console.error('Error updating map data:', error);
+      setMapDataLoaded(false);
+    }
+  }, [languages, selectedLanguages, mapLoaded]);
+
+  // Initialize map
   useEffect(() => {
     if (!mapContainer.current || !isMapboxConfigured) return;
+
+    console.log('Initializing map...');
+    setMapLoaded(false);
+    setMapDataLoaded(false);
 
     // Initialize Mapbox
     mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
@@ -53,10 +171,13 @@ const MapboxHeatmap: React.FC<MapboxHeatmapProps> = ({ selectedLanguages }) => {
       'top-right'
     );
 
-    // Ensure proper centering on initial load
-    map.current.on('load', () => {
+    // Handle map load event
+    const handleMapLoad = () => {
+      console.log('Map loaded successfully');
+      setMapLoaded(true);
+      
+      // Ensure proper centering on initial load
       if (map.current) {
-        // Force center the map to ensure it's properly positioned
         map.current.easeTo({
           center: DEFAULT_MAP_CONFIG.center,
           zoom: DEFAULT_MAP_CONFIG.zoom,
@@ -65,7 +186,9 @@ const MapboxHeatmap: React.FC<MapboxHeatmapProps> = ({ selectedLanguages }) => {
           duration: 0, // Instant centering
         });
       }
-    });
+    };
+
+    map.current.on('load', handleMapLoad);
 
     // Add atmosphere for globe mode
     if (mapStyle === 'globe') {
@@ -104,122 +227,24 @@ const MapboxHeatmap: React.FC<MapboxHeatmapProps> = ({ selectedLanguages }) => {
         cancelAnimationFrame(rotationAnimation);
       }
       map.current?.remove();
+      setMapLoaded(false);
+      setMapDataLoaded(false);
     };
   }, [mapStyle, isRotating, isMapboxConfigured]);
 
-  // Update heatmap data when languages change
+  // Update map data when dependencies change
   useEffect(() => {
-    if (!map.current || !languages.length) return;
-
-    // If no languages are selected, clear the map data
-    if (!selectedLanguages.length) {
-      if (map.current && map.current.getSource('country-heatmap')) {
-        map.current.removeLayer('country-fill-layer');
-        map.current.removeLayer('country-border-layer');
-        map.current.removeSource('country-heatmap');
-      }
-      return;
-    }
-
-    console.log('Updating map data for languages:', selectedLanguages);
-
-    const heatmapData = processLanguageDataForHeatmap(languages, selectedLanguages);
-    const countryPolygonFeatures = generateCountryPolygonFeatures(heatmapData.countries, countryBorders);
-
-    console.log('Generated country polygon features:', countryPolygonFeatures.length);
-
-    // Don't proceed if no data
-    if (countryPolygonFeatures.length === 0) {
-      console.warn('No country polygon features generated for selected languages');
-      return;
-    }
-
-    const updateMapData = () => {
-      if (!map.current) return;
-
-      try {
-        console.log('Updating map layers...');
-        
-        // Remove existing sources and layers
-        if (map.current.getSource('country-heatmap')) {
-          map.current.removeLayer('country-fill-layer');
-          map.current.removeLayer('country-border-layer');
-          map.current.removeSource('country-heatmap');
-        }
-
-        // Add new data source
-        map.current.addSource('country-heatmap', {
-          type: 'geojson',
-          data: {
-            type: 'FeatureCollection',
-            features: countryPolygonFeatures,
-          },
-        });
-
-        // Add country fill layer (the heatmap)
-        map.current.addLayer({
-          id: 'country-fill-layer',
-          type: 'fill',
-          source: 'country-heatmap',
-          paint: {
-            'fill-color': [
-              'interpolate',
-              ['linear'],
-              ['get', 'intensity'],
-              0, '#FEF3C7',    // Very light yellow
-              25, '#FBBF24',   // Yellow
-              50, '#F59E0B',   // Orange
-              75, '#DC2626',   // Red
-              100, '#7C2D12'   // Dark red
-            ],
-            'fill-opacity': [
-              'interpolate',
-              ['linear'],
-              ['get', 'intensity'],
-              0, 0.3,
-              25, 0.5,
-              50, 0.7,
-              75, 0.8,
-              100, 0.9
-            ],
-          },
-        });
-
-        // Add country border layer
-        map.current.addLayer({
-          id: 'country-border-layer',
-          type: 'line',
-          source: 'country-heatmap',
-          paint: {
-            'line-color': '#FFFFFF',
-            'line-width': 1,
-            'line-opacity': 0.6,
-          },
-        });
-
-        console.log('Map data updated successfully');
-      } catch (error) {
-        console.error('Error updating map data:', error);
-      }
-    };
-
-    // Force update the map data regardless of load state
-    if (map.current.isStyleLoaded()) {
+    // Use a small delay to ensure proper sequencing
+    const timer = setTimeout(() => {
       updateMapData();
-    } else {
-      // If map isn't loaded yet, wait for it and then update
-      const handleMapLoad = () => {
-        updateMapData();
-        map.current?.off('load', handleMapLoad);
-      };
-      map.current.on('load', handleMapLoad);
-    }
+    }, 100);
 
-  }, [languages, selectedLanguages]);
+    return () => clearTimeout(timer);
+  }, [updateMapData]);
 
   // Separate useEffect for hover effects
   useEffect(() => {
-    if (!map.current || !languages.length) return;
+    if (!map.current || !languages.length || !mapDataLoaded) return;
 
     const addHoverEffects = () => {
       if (!map.current) return;
@@ -249,7 +274,7 @@ const MapboxHeatmap: React.FC<MapboxHeatmapProps> = ({ selectedLanguages }) => {
             closeButton: false,
             closeOnClick: false,
             offset: 15,
-            className: 'country-popup', // Add a class for styling
+            className: 'country-popup',
           });
 
           // Fix: Ensure countryLanguages is an array before calling map
@@ -299,11 +324,16 @@ const MapboxHeatmap: React.FC<MapboxHeatmapProps> = ({ selectedLanguages }) => {
       });
     };
 
-    // Add hover effects when map is ready
-    if (map.current.isStyleLoaded()) {
+    // Add hover effects when map and data are ready
+    if (map.current.isStyleLoaded() && mapDataLoaded) {
       addHoverEffects();
     } else {
-      map.current.once('load', addHoverEffects);
+      const handleStyleLoad = () => {
+        if (mapDataLoaded) {
+          addHoverEffects();
+        }
+      };
+      map.current.once('load', handleStyleLoad);
     }
 
     // Cleanup function to remove event listeners and popup
@@ -317,7 +347,7 @@ const MapboxHeatmap: React.FC<MapboxHeatmapProps> = ({ selectedLanguages }) => {
         popup.current = null;
       }
     };
-  }, [languages, t]);
+  }, [languages, t, mapDataLoaded]);
 
   // Helper function to get the center of a polygon
   function getPolygonCenter(geometry: any): [number, number] {
@@ -430,22 +460,6 @@ const MapboxHeatmap: React.FC<MapboxHeatmapProps> = ({ selectedLanguages }) => {
     );
   }
 
-  if (!selectedLanguages.length) {
-    return (
-      <Card className="aspect-video flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <Globe className="w-16 h-16 mx-auto text-muted-foreground" />
-          <div>
-            <h3 className="text-lg font-semibold mb-2">Select Languages</h3>
-            <p className="text-muted-foreground">
-              Choose languages to see their global distribution on the interactive heatmap.
-            </p>
-          </div>
-        </div>
-      </Card>
-    );
-  }
-
   return (
     <div className="space-y-4">
       {/* Controls */}
@@ -457,6 +471,11 @@ const MapboxHeatmap: React.FC<MapboxHeatmapProps> = ({ selectedLanguages }) => {
           {hoveredCountry && (
             <Badge variant="secondary" className="text-sm">
               {hoveredCountry}
+            </Badge>
+          )}
+          {!selectedLanguages.length && (
+            <Badge variant="secondary" className="text-sm">
+              No Languages Selected
             </Badge>
           )}
         </div>
@@ -492,25 +511,39 @@ const MapboxHeatmap: React.FC<MapboxHeatmapProps> = ({ selectedLanguages }) => {
 
       {/* Legend */}
       <Card className="p-4">
-        <h4 className="font-medium mb-3">Language Speaker Density</h4>
-        <div className="flex items-center gap-4 text-sm">
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded bg-yellow-100"></div>
-            <span>Low (0-25%)</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded bg-yellow-400"></div>
-            <span>Medium (25-50%)</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded bg-orange-500"></div>
-            <span>High (50-75%)</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded bg-red-600"></div>
-            <span>Very High (75%+)</span>
-          </div>
-        </div>
+        {selectedLanguages.length > 0 ? (
+          <>
+            <h4 className="font-medium mb-3">Language Speaker Density</h4>
+            <div className="flex items-center gap-4 text-sm">
+              <div className="flex items-center gap-2">
+                <div className="w-4 h-4 rounded bg-yellow-100"></div>
+                <span>Low (0-25%)</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-4 h-4 rounded bg-yellow-400"></div>
+                <span>Medium (25-50%)</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-4 h-4 rounded bg-orange-500"></div>
+                <span>High (50-75%)</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-4 h-4 rounded bg-red-600"></div>
+                <span>Very High (75%+)</span>
+              </div>
+            </div>
+          </>
+        ) : (
+          <>
+            <h4 className="font-medium mb-3">Interactive Globe</h4>
+            <div className="text-sm text-muted-foreground space-y-2">
+              <p>• Select languages from the sidebar to see their global distribution</p>
+              <p>• Use the controls above to switch between 3D Globe and 2D Map views</p>
+              <p>• Click and drag to explore different regions</p>
+              <p>• Use the mouse wheel to zoom in and out</p>
+            </div>
+          </>
+        )}
       </Card>
     </div>
   );

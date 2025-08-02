@@ -585,11 +585,12 @@ const Globe3D: React.FC<Globe3DProps> = ({ selectedLanguages }) => {
   return (
     <div className="space-y-4">
       <Card className="p-4">
-        <div className="h-[700px] relative">
+        <div className="h-[700px] relative flex items-center justify-center">
             <Canvas 
-            camera={{ position: [0, 0, 5], fov: 60 }}
+            camera={{ position: [0, -0.5, 5], fov: 60 }}
             shadows
             gl={{ antialias: true, alpha: true }}
+            style={{ width: '100%', height: '100%' }}
           >
             {/* Realistic lighting setup for day/night */}
             <ambientLight intensity={0.15} color="#404080" />
@@ -643,6 +644,7 @@ const Globe3D: React.FC<Globe3DProps> = ({ selectedLanguages }) => {
               autoRotateSpeed={0.3}
               maxPolarAngle={Math.PI}
               minPolarAngle={0}
+              target={[0, 0.5, 0]} // Shift the target up to move globe up
             />
           </Canvas>
 
