@@ -12,10 +12,56 @@
         { "code": "GB", "name": "United Kingdom", "speakerPercentage": 98, "isOfficial": true, "population": 67000000, "culturalNotes": "Native English-speaking country" },
         { "code": "CA", "name": "Canada", "speakerPercentage": 86, "isOfficial": true, "population": 38000000, "culturalNotes": "Official language alongside French" },
         { "code": "AU", "name": "Australia", "speakerPercentage": 96, "isOfficial": true, "population": 26000000, "culturalNotes": "Primary language across the continent" },
-        { "code": "IN", "name": "India", "speakerPercentage": 12, "isOfficial": true, "population": 1400000000, "culturalNotes": "Widely used in business and education" },
+        { "code": "NZ", "name": "New Zealand", "speakerPercentage": 95, "isOfficial": true, "population": 5100000, "culturalNotes": "Primary language, with Māori and NZ Sign Language also official" },
+        { "code": "IE", "name": "Ireland", "speakerPercentage": 97, "isOfficial": true, "population": 5000000, "culturalNotes": "Official language alongside Irish (Gaeilge)" },
+        { "code": "IN", "name": "India", "speakerPercentage": 12, "isOfficial": true, "population": 1400000000, "culturalNotes": "Widely used in business and higher education" },
+        { "code": "PK", "name": "Pakistan", "speakerPercentage": 48, "isOfficial": true, "population": 225000000, "culturalNotes": "Official language used in government and by the elite, alongside Urdu" },
         { "code": "NG", "name": "Nigeria", "speakerPercentage": 53, "isOfficial": true, "population": 220000000, "culturalNotes": "Official language, unifying diverse ethnic groups" },
-        { "code": "ZA", "name": "South Africa", "speakerPercentage": 13, "isOfficial": true, "population": 60000000, "culturalNotes": "One of 11 official languages" }
-      ]
+        { "code": "PH", "name": "Philippines", "speakerPercentage": 92, "isOfficial": true, "population": 113000000, "culturalNotes": "Co-official with Filipino; used in government, media, and education" },
+        { "code": "ZA", "name": "South Africa", "speakerPercentage": 13, "isOfficial": true, "population": 60000000, "culturalNotes": "One of 11 official languages, acts as a lingua franca" },
+        { "code": "SG", "name": "Singapore", "speakerPercentage": 83, "isOfficial": true, "population": 5900000, "culturalNotes": "One of four official languages, serves as the primary language of business" },
+        { "code": "JM", "name": "Jamaica", "speakerPercentage": 99, "isOfficial": true, "population": 2900000, "culturalNotes": "The official language, though most daily conversation is in Jamaican Patois" },
+        { "code": "KE", "name": "Kenya", "speakerPercentage": 20, "isOfficial": true, "population": 54000000, "culturalNotes": "Official language alongside Swahili, used in government and higher education" },
+  { "code": "GH", "name": "Ghana", "speakerPercentage": 25, "isOfficial": true, "population": 32000000, "culturalNotes": "Official language, widely used in business and government" },
+  { "code": "BB", "name": "Barbados", "speakerPercentage": 95, "isOfficial": true, "population": 280000, "culturalNotes": "Primary language in government, education, and daily communication" },
+  { "code": "BS", "name": "The Bahamas", "speakerPercentage": 98, "isOfficial": true, "population": 400000, "culturalNotes": "Primary language in government, tourism, and daily communication" },
+  { "code": "BZ", "name": "Belize", "speakerPercentage": 82, "isOfficial": true, "population": 410000, "culturalNotes": "Primary official language, widely used in government and education" },
+  { "code": "UG", "name": "Uganda", "speakerPercentage": 20, "isOfficial": true, "population": 48000000, "culturalNotes": "Official language alongside Swahili, used in government and education" },
+  { "code": "BW", "name": "Botswana", "speakerPercentage": 25, "isOfficial": true, "population": 2600000, "culturalNotes": "Official language alongside Setswana, used in administration and education" },
+  { "code": "FJ", "name": "Fiji", "speakerPercentage": 20, "isOfficial": true, "population": 900000, "culturalNotes": "Official language alongside Fijian and Hindi, used in government and education" },
+  { "code": "MT", "name": "Malta", "speakerPercentage": 90, "isOfficial": true, "population": 550000, "culturalNotes": "Co-official with Maltese, widely used in tourism, education, and government" },
+  { "code": "GY", "name": "Guyana", "speakerPercentage": 90, "isOfficial": true, "population": 800000, "culturalNotes": "Official language, dominant in government, education, and media" },
+  { "code": "AG", "name": "Antigua and Barbuda", "speakerPercentage": 95, "isOfficial": true, "population": 100000, "culturalNotes": "Primary language in government, education, and tourism" },
+  { "code": "SL", "name": "Sierra Leone", "speakerPercentage": 20, "isOfficial": true, "population": 8600000, "culturalNotes": "Official language, used in government and education alongside local languages" },
+  { "code": "ZM", "name": "Zambia", "speakerPercentage": 25, "isOfficial": true, "population": 20000000, "culturalNotes": "Official language, widely used in education and administration" },
+  { "code": "ZW", "name": "Zimbabwe", "speakerPercentage": 30, "isOfficial": true, "population": 16000000, "culturalNotes": "Official language among 16, used in government and education" },
+  { "code": "MW", "name": "Malawi", "speakerPercentage": 20, "isOfficial": true, "population": 21000000, "culturalNotes": "Official language alongside Chichewa, used in government and schools" },
+  { "code": "NA", "name": "Namibia", "speakerPercentage": 25, "isOfficial": true, "population": 2600000, "culturalNotes": "Official language, used in government and education" },
+  { "code": "GM", "name": "Gambia", "speakerPercentage": 20, "isOfficial": true, "population": 2700000, "culturalNotes": "Official language, used in administration and education" },
+  { "code": "TT", "name": "Trinidad and Tobago", "speakerPercentage": 95, "isOfficial": true, "population": 1400000, "culturalNotes": "Primary language in government, education, and media" },
+  { "code": "BS", "name": "The Bahamas", "speakerPercentage": 98, "isOfficial": true, "population": 400000, "culturalNotes": "Primary language in government, tourism, and daily communication" },
+  { "code": "KN", "name": "Saint Kitts and Nevis", "speakerPercentage": 95, "isOfficial": true, "population": 50000, "culturalNotes": "Primary language in government and daily communication" },
+  { "code": "LC", "name": "Saint Lucia", "speakerPercentage": 90, "isOfficial": true, "population": 180000, "culturalNotes": "Official language, though French Creole is widely spoken" },
+  { "code": "VC", "name": "Saint Vincent and the Grenadines", "speakerPercentage": 95, "isOfficial": true, "population": 110000, "culturalNotes": "Primary language in government and education" },
+  { "code": "PG", "name": "Papua New Guinea", "speakerPercentage": 15, "isOfficial": true, "population": 10000000, "culturalNotes": "Official language alongside Tok Pisin and Hiri Motu, used in government" },
+  { "code": "SB", "name": "Solomon Islands", "speakerPercentage": 15, "isOfficial": true, "population": 700000, "culturalNotes": "Official language, though Pijin is more commonly spoken" },
+  { "code": "TO", "name": "Tonga", "speakerPercentage": 30, "isOfficial": true, "population": 100000, "culturalNotes": "Official language alongside Tongan, used in education and government" },
+  { "code": "BH", "name": "Bahrain", "speakerPercentage": 70, "isOfficial": true, "population": 1500000, "culturalNotes": "Widely used in business, government, and education alongside Arabic" },
+  { "code": "KI", "name": "Kiribati", "speakerPercentage": 25, "isOfficial": true, "population": 130000, "culturalNotes": "Official language alongside Gilbertese, used in government and education" },
+  { "code": "VU", "name": "Vanuatu", "speakerPercentage": 20, "isOfficial": true, "population": 320000, "culturalNotes": "Official language alongside Bislama and French, used in administration" },
+  { "code": "MH", "name": "Marshall Islands", "speakerPercentage": 90, "isOfficial": true, "population": 60000, "culturalNotes": "Official language alongside Marshallese, primary in government and education" },
+  { "code": "NR", "name": "Nauru", "speakerPercentage": 90, "isOfficial": true, "population": 10000, "culturalNotes": "Official language alongside Nauruan, used in government and daily communication" },
+  { "code": "TV", "name": "Tuvalu", "speakerPercentage": 30, "isOfficial": true, "population": 12000, "culturalNotes": "Official language alongside Tuvaluan, used in government and education" },
+  { "code": "GD", "name": "Grenada", "speakerPercentage": 95, "isOfficial": true, "population": 110000, "culturalNotes": "Primary language in government, education, and daily communication" },
+  { "code": "DM", "name": "Dominica", "speakerPercentage": 94, "isOfficial": true, "population": 70000, "culturalNotes": "Official language, though French Creole is also spoken" },
+  { "code": "MS", "name": "Montserrat", "speakerPercentage": 95, "isOfficial": true, "population": 5000, "culturalNotes": "Primary language in government and daily communication" },
+  { "code": "AI", "name": "Anguilla", "speakerPercentage": 95, "isOfficial": true, "population": 15000, "culturalNotes": "Primary language in government, tourism, and daily communication" },
+  { "code": "VG", "name": "British Virgin Islands", "speakerPercentage": 95, "isOfficial": true, "population": 30000, "culturalNotes": "Primary language in government, tourism, and daily communication" },
+  { "code": "SZ", "name": "Eswatini", "speakerPercentage": 20, "isOfficial": true, "population": 1200000, "culturalNotes": "Official language alongside siSwati, used in government and education" },
+  { "code": "LS", "name": "Lesotho", "speakerPercentage": 25, "isOfficial": true, "population": 2300000, "culturalNotes": "Official language alongside Sesotho, used in administration and education" },
+  { "code": "LK", "name": "Sri Lanka", "speakerPercentage": 25, "isOfficial": true, "population": 22000000, "culturalNotes": "Official language alongside Sinhala and Tamil, used in government and education" },
+  { "code": "MV", "name": "Maldives", "speakerPercentage": 50, "isOfficial": true, "population": 540000, "culturalNotes": "Widely used in tourism, government, and education alongside Dhivehi" }
+     ]
     },
     {
       "id": "spanish",
@@ -468,6 +514,54 @@
       "officialCountries": 1,
       "countries": [
         { "code": "NG", "name": "Nigeria", "speakerPercentage": 18, "isOfficial": true, "population": 220000000, "culturalNotes": "One of the three major languages of Nigeria, dominant in the southeast." }
+      ]
+    },
+    {
+      "id": "malay",
+      "name": "Malay",
+      "color": "language-malay",
+      "totalSpeakers": 290000000,
+      "globalCoverage": 3.6,
+      "officialCountries": 4,
+      "countries": [
+        { "code": "MY", "name": "Malaysia", "speakerPercentage": 80, "isOfficial": true, "population": 33000000, "culturalNotes": "Official language, known as Bahasa Malaysia." },
+        { "code": "ID", "name": "Indonesia", "speakerPercentage": 80, "isOfficial": true, "population": 273000000, "culturalNotes": "Indonesian is a standardized variety of Malay." },
+        { "code": "BN", "name": "Brunei", "speakerPercentage": 84, "isOfficial": true, "population": 450000, "culturalNotes": "Official language, known as Bahasa Melayu." },
+        { "code": "SG", "name": "Singapore", "speakerPercentage": 13, "isOfficial": true, "population": 6000000, "culturalNotes": "One of the four official languages." }
+      ]
+    },
+    {
+      "id": "sundanese",
+      "name": "Sundanese",
+      "color": "language-sundanese",
+      "totalSpeakers": 42000000,
+      "globalCoverage": 0.5,
+      "officialCountries": 0,
+      "countries": [
+        { "code": "ID", "name": "Indonesia", "speakerPercentage": 15, "isOfficial": false, "population": 273000000, "culturalNotes": "Second most-spoken regional language, primarily in West Java." }
+      ]
+    },
+    {
+      "id": "greek",
+      "name": "Greek",
+      "color": "language-greek",
+      "totalSpeakers": 13500000,
+      "globalCoverage": 0.17,
+      "officialCountries": 2,
+      "countries": [
+        { "code": "GR", "name": "Greece", "speakerPercentage": 99, "isOfficial": true, "population": 10400000, "culturalNotes": "One of the oldest documented living languages." },
+        { "code": "CY", "name": "Cyprus", "speakerPercentage": 81, "isOfficial": true, "population": 1200000, "culturalNotes": "Co-official language, along with Turkish." }
+      ]
+    },
+    {
+      "id": "hebrew",
+      "name": "Hebrew",
+      "color": "language-hebrew",
+      "totalSpeakers": 9000000,
+      "globalCoverage": 0.11,
+      "officialCountries": 1,
+      "countries": [
+        { "code": "IL", "name": "Israel", "speakerPercentage": 60, "isOfficial": true, "population": 9300000, "culturalNotes": "Revived as a modern spoken language in the 19th century." }
       ]
     }
   ]
