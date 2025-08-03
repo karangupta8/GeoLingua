@@ -29,7 +29,7 @@ const MapboxHeatmap: React.FC<MapboxHeatmapProps> = ({ selectedLanguages }) => {
   const [mapDataLoaded, setMapDataLoaded] = useState(false);
 
   // Check if Mapbox token is configured
-  const isMapboxConfigured = MAPBOX_ACCESS_TOKEN && MAPBOX_ACCESS_TOKEN !== 'your-mapbox-access-token-here';
+  const isMapboxConfigured = MAPBOX_ACCESS_TOKEN && MAPBOX_ACCESS_TOKEN.length > 0;
 
   // Memoized function to update map data
   const updateMapData = useCallback(() => {
@@ -178,12 +178,13 @@ const MapboxHeatmap: React.FC<MapboxHeatmapProps> = ({ selectedLanguages }) => {
       
       // Ensure proper centering on initial load
       if (map.current) {
+        const center = mapStyle === 'globe' ? [20, 20] : [0, 0];
         map.current.easeTo({
-          center: DEFAULT_MAP_CONFIG.center,
+          center: center as [number, number],
           zoom: DEFAULT_MAP_CONFIG.zoom,
           bearing: DEFAULT_MAP_CONFIG.bearing,
           pitch: mapStyle === 'globe' ? DEFAULT_MAP_CONFIG.pitch : 0,
-          duration: 0, // Instant centering
+          duration: 500,
         });
       }
     };
@@ -250,8 +251,8 @@ const MapboxHeatmap: React.FC<MapboxHeatmapProps> = ({ selectedLanguages }) => {
       if (!map.current) return;
 
       // Remove existing event listeners to prevent duplicates
-      map.current.off('mouseenter', 'country-fill-layer');
-      map.current.off('mouseleave', 'country-fill-layer');
+      map.current.off('mouseenter', 'country-fill-layer', undefined);
+      map.current.off('mouseleave', 'country-fill-layer', undefined);
 
       map.current.on('mouseenter', 'country-fill-layer', (e) => {
         if (!map.current) return;
@@ -339,8 +340,8 @@ const MapboxHeatmap: React.FC<MapboxHeatmapProps> = ({ selectedLanguages }) => {
     // Cleanup function to remove event listeners and popup
     return () => {
       if (map.current) {
-        map.current.off('mouseenter', 'country-fill-layer');
-        map.current.off('mouseleave', 'country-fill-layer');
+        map.current.off('mouseenter', 'country-fill-layer', undefined);
+        map.current.off('mouseleave', 'country-fill-layer', undefined);
       }
       if (popup.current) {
         popup.current.remove();
@@ -389,31 +390,42 @@ const MapboxHeatmap: React.FC<MapboxHeatmapProps> = ({ selectedLanguages }) => {
   }
 
   const toggleMapStyle = () => {
-    setMapStyle(prev => prev === 'globe' ? 'flat' : 'globe');
-    // Force a re-render of the map when style changes
+    const newStyle = mapStyle === 'globe' ? 'flat' : 'globe';
+    setMapStyle(newStyle);
+    
     if (map.current) {
-      // Trigger the data update effect by forcing a re-render
-      setTimeout(() => {
-        if (map.current && languages.length && selectedLanguages.length) {
-          const heatmapData = processLanguageDataForHeatmap(languages, selectedLanguages);
-          const countryPolygonFeatures = generateCountryPolygonFeatures(heatmapData.countries, countryBorders);
-          
-          if (map.current.getSource('country-heatmap')) {
-            (map.current.getSource('country-heatmap') as any).setData({
-              type: 'FeatureCollection',
-              features: countryPolygonFeatures,
-            });
-          }
-        }
-      }, 100);
+      // Use setProjection instead of recreating the map
+      map.current.setProjection(newStyle === 'globe' ? 'globe' : 'mercator');
+      
+      // Update pitch and fog for the new projection
+      if (newStyle === 'globe') {
+        map.current.setPitch(DEFAULT_MAP_CONFIG.pitch);
+        map.current.setFog({
+          color: 'rgb(186, 210, 235)',
+          'high-color': 'rgb(36, 92, 223)',
+          'horizon-blend': 0.02,
+        });
+      } else {
+        map.current.setPitch(0);
+        map.current.setFog(null);
+      }
+      
+      // Better centering for globe mode
+      map.current.easeTo({
+        center: newStyle === 'globe' ? [20, 20] : [0, 0],
+        zoom: DEFAULT_MAP_CONFIG.zoom,
+        bearing: DEFAULT_MAP_CONFIG.bearing,
+        duration: 1000,
+      });
     }
   };
 
   const resetRotation = () => {
     setIsRotating(true);
     if (map.current) {
+      const center = mapStyle === 'globe' ? [20, 20] : [0, 0];
       map.current.easeTo({
-        center: DEFAULT_MAP_CONFIG.center,
+        center: center as [number, number],
         zoom: DEFAULT_MAP_CONFIG.zoom,
         bearing: DEFAULT_MAP_CONFIG.bearing,
         pitch: mapStyle === 'globe' ? DEFAULT_MAP_CONFIG.pitch : 0,
