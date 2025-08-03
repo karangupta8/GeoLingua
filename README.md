@@ -65,7 +65,8 @@
 ## 🎥 Demo
 
 ![landing_page](readme_assets/landing_page.png)
-![demo](readme_assets/demo.png)
+![demo1](readme_assets/demo1.png)
+![demo2](readme_assets/demo2.png)
 ![insights](readme_assets/insights.png)
 
 ## 🔮 **Future Roadmap and Potential Features**
