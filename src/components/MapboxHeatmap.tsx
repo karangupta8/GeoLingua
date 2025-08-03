@@ -150,97 +150,88 @@ const MapboxHeatmap: React.FC<MapboxHeatmapProps> = ({ selectedLanguages }) => {
     setMapLoaded(false);
     setMapDataLoaded(false);
 
-    // Add container resize observer to ensure proper sizing
-    const resizeObserver = new ResizeObserver(() => {
-      if (map.current) {
-        map.current.resize();
-      }
-    });
-
-    if (mapContainer.current) {
-      resizeObserver.observe(mapContainer.current);
-    }
-
     // Initialize Mapbox
     mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
     
-    // Wait for container to be fully rendered
-    setTimeout(() => {
-      if (!mapContainer.current) return;
+    map.current = new mapboxgl.Map({
+      container: mapContainer.current,
+      style: MAPBOX_STYLES.dark,
+      projection: mapStyle === 'globe' ? 'globe' : 'mercator',
+      zoom: DEFAULT_MAP_CONFIG.zoom,
+      center: DEFAULT_MAP_CONFIG.center,
+      pitch: mapStyle === 'globe' ? DEFAULT_MAP_CONFIG.pitch : 0,
+      bearing: DEFAULT_MAP_CONFIG.bearing,
+    });
+
+    // Add navigation controls
+    map.current.addControl(
+      new mapboxgl.NavigationControl({
+        visualizePitch: true,
+      }),
+      'top-right'
+    );
+
+    // Handle map load event
+    const handleMapLoad = () => {
+      console.log('Map loaded successfully');
+      setMapLoaded(true);
       
-      map.current = new mapboxgl.Map({
-        container: mapContainer.current,
-        style: MAPBOX_STYLES.dark,
-        projection: 'globe', // Always start with globe
-        zoom: DEFAULT_MAP_CONFIG.zoom,
-        center: [20, 20], // Better initial center for globe view
-        pitch: DEFAULT_MAP_CONFIG.pitch,
-        bearing: DEFAULT_MAP_CONFIG.bearing,
-      });
+      // Ensure proper centering on initial load
+      if (map.current) {
+        const center = mapStyle === 'globe' ? [20, 20] : [0, 0];
+        map.current.easeTo({
+          center: center as [number, number],
+          zoom: DEFAULT_MAP_CONFIG.zoom,
+          bearing: DEFAULT_MAP_CONFIG.bearing,
+          pitch: mapStyle === 'globe' ? DEFAULT_MAP_CONFIG.pitch : 0,
+          duration: 500,
+        });
+      }
+    };
 
-      // Add navigation controls
-      map.current.addControl(
-        new mapboxgl.NavigationControl({
-          visualizePitch: true,
-        }),
-        'top-right'
-      );
+    map.current.on('load', handleMapLoad);
 
-      // Handle map load event
-      const handleMapLoad = () => {
-        console.log('Map loaded successfully');
-        setMapLoaded(true);
-        
-        // Add fog for globe view
+    // Add atmosphere for globe mode
+    if (mapStyle === 'globe') {
+      map.current.on('style.load', () => {
         if (map.current) {
           map.current.setFog({
             color: 'rgb(186, 210, 235)',
             'high-color': 'rgb(36, 92, 223)',
             'horizon-blend': 0.02,
           });
-          
-          // Ensure proper centering on initial load
-          map.current.easeTo({
-            center: [20, 20],
-            zoom: DEFAULT_MAP_CONFIG.zoom,
-            bearing: DEFAULT_MAP_CONFIG.bearing,
-            pitch: DEFAULT_MAP_CONFIG.pitch,
-            duration: 1000,
-          });
+        }
+      });
+    }
+
+    // Auto-rotation for globe mode
+    let rotationAnimation: number;
+    if (mapStyle === 'globe' && isRotating) {
+      const rotateGlobe = () => {
+        if (map.current && isRotating) {
+          const center = map.current.getCenter();
+          center.lng -= 0.2;
+          map.current.easeTo({ center, duration: 100, easing: (n) => n });
+          rotationAnimation = requestAnimationFrame(rotateGlobe);
         }
       };
+      rotateGlobe();
+    }
 
-      map.current.on('load', handleMapLoad);
-
-      // Auto-rotation for globe mode
-      let rotationAnimation: number;
-      if (isRotating) {
-        const rotateGlobe = () => {
-          if (map.current && isRotating && mapStyle === 'globe') {
-            const center = map.current.getCenter();
-            center.lng -= 0.2;
-            map.current.easeTo({ center, duration: 100, easing: (n) => n });
-            rotationAnimation = requestAnimationFrame(rotateGlobe);
-          }
-        };
-        rotateGlobe();
-      }
-
-      // Stop rotation on user interaction
-      const stopRotation = () => setIsRotating(false);
-      map.current.on('mousedown', stopRotation);
-      map.current.on('touchstart', stopRotation);
-    }, 100);
+    // Stop rotation on user interaction
+    const stopRotation = () => setIsRotating(false);
+    map.current.on('mousedown', stopRotation);
+    map.current.on('touchstart', stopRotation);
 
     return () => {
-      if (map.current) {
-        map.current.remove();
+      if (rotationAnimation) {
+        cancelAnimationFrame(rotationAnimation);
       }
-      resizeObserver.disconnect();
+      map.current?.remove();
       setMapLoaded(false);
       setMapDataLoaded(false);
     };
-  }, [isMapboxConfigured]); // Only recreate when configuration changes
+  }, [mapStyle, isRotating, isMapboxConfigured]);
 
   // Update map data when dependencies change
   useEffect(() => {
