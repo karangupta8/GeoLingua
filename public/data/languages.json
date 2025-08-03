@@ -356,6 +356,119 @@
       "countries": [
         { "code": "TH", "name": "Thailand", "speakerPercentage": 90, "isOfficial": true, "population": 70000000, "culturalNotes": "A tonal language from the Tai-Kadai language family." }
       ]
+    },
+    {
+      "id": "javanese",
+      "name": "Javanese",
+      "color": "language-javanese",
+      "totalSpeakers": 100000000,
+      "globalCoverage": 1.25,
+      "officialCountries": 0,
+      "countries": [
+        { "code": "ID", "name": "Indonesia", "speakerPercentage": 36, "isOfficial": false, "population": 273000000, "culturalNotes": "Largest regional language of Indonesia, concentrated on the island of Java." }
+      ]
+    },
+    {
+      "id": "wu",
+      "name": "Wu Chinese",
+      "color": "language-wu",
+      "totalSpeakers": 82000000,
+      "globalCoverage": 1.0,
+      "officialCountries": 0,
+      "countries": [
+        { "code": "CN", "name": "China", "speakerPercentage": 6, "isOfficial": false, "population": 1440000000, "culturalNotes": "A major group of Sinitic languages spoken in eastern China, including Shanghainese." }
+      ]
+    },
+    {
+      "id": "hausa",
+      "name": "Hausa",
+      "color": "language-hausa",
+      "totalSpeakers": 100000000,
+      "globalCoverage": 1.25,
+      "officialCountries": 1,
+      "countries": [
+        { "code": "NG", "name": "Nigeria", "speakerPercentage": 50, "isOfficial": false, "population": 220000000, "culturalNotes": "One of the three major languages of Nigeria, widely used as a lingua franca in the north." },
+        { "code": "NE", "name": "Niger", "speakerPercentage": 80, "isOfficial": true, "population": 25000000, "culturalNotes": "National language and the most spoken language in the country." }
+      ]
+    },
+    {
+      "id": "yoruba",
+      "name": "Yoruba",
+      "color": "language-yoruba",
+      "totalSpeakers": 50000000,
+      "globalCoverage": 0.6,
+      "officialCountries": 1,
+      "countries": [
+        { "code": "NG", "name": "Nigeria", "speakerPercentage": 21, "isOfficial": true, "population": 220000000, "culturalNotes": "One of the three major languages of Nigeria, dominant in the southwest." },
+        { "code": "BJ", "name": "Benin", "speakerPercentage": 17, "isOfficial": false, "population": 13000000, "culturalNotes": "A major language, especially in the central and southern regions." }
+      ]
+    },
+    {
+      "id": "filipino",
+      "name": "Filipino (Tagalog)",
+      "color": "language-filipino",
+      "totalSpeakers": 100000000,
+      "globalCoverage": 1.25,
+      "officialCountries": 1,
+      "countries": [
+        { "code": "PH", "name": "Philippines", "speakerPercentage": 96, "isOfficial": true, "population": 113000000, "culturalNotes": "The national language, based on Tagalog, used as a lingua franca across the archipelago." }
+      ]
+    },
+    {
+      "id": "gujarati",
+      "name": "Gujarati",
+      "color": "language-gujarati",
+      "totalSpeakers": 62000000,
+      "globalCoverage": 0.78,
+      "officialCountries": 1,
+      "countries": [
+        { "code": "IN", "name": "India", "speakerPercentage": 5, "isOfficial": true, "population": 1400000000, "culturalNotes": "Official language of the state of Gujarat, known for its rich literary tradition." }
+      ]
+    },
+    {
+      "id": "kannada",
+      "name": "Kannada",
+      "color": "language-kannada",
+      "totalSpeakers": 59000000,
+      "globalCoverage": 0.74,
+      "officialCountries": 1,
+      "countries": [
+        { "code": "IN", "name": "India", "speakerPercentage": 4, "isOfficial": true, "population": 1400000000, "culturalNotes": "Official language of the state of Karnataka, one of the oldest living languages in India." }
+      ]
+    },
+    {
+      "id": "burmese",
+      "name": "Burmese",
+      "color": "language-burmese",
+      "totalSpeakers": 43000000,
+      "globalCoverage": 0.54,
+      "officialCountries": 1,
+      "countries": [
+        { "code": "MM", "name": "Myanmar", "speakerPercentage": 65, "isOfficial": true, "population": 54000000, "culturalNotes": "The official language of Myanmar. It is a tonal language with a unique script." }
+      ]
+    },
+    {
+      "id": "pashto",
+      "name": "Pashto",
+      "color": "language-pashto",
+      "totalSpeakers": 60000000,
+      "globalCoverage": 0.75,
+      "officialCountries": 1,
+      "countries": [
+        { "code": "AF", "name": "Afghanistan", "speakerPercentage": 50, "isOfficial": true, "population": 40000000, "culturalNotes": "One of the two official languages, along with Dari (Persian)." },
+        { "code": "PK", "name": "Pakistan", "speakerPercentage": 15, "isOfficial": false, "population": 231000000, "culturalNotes": "Predominantly spoken in the Khyber Pakhtunkhwa province." }
+      ]
+    },
+    {
+      "id": "igbo",
+      "name": "Igbo",
+      "color": "language-igbo",
+      "totalSpeakers": 45000000,
+      "globalCoverage": 0.56,
+      "officialCountries": 1,
+      "countries": [
+        { "code": "NG", "name": "Nigeria", "speakerPercentage": 18, "isOfficial": true, "population": 220000000, "culturalNotes": "One of the three major languages of Nigeria, dominant in the southeast." }
+      ]
     }
   ]
 }

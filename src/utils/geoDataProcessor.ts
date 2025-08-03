@@ -82,6 +82,19 @@ const COUNTRY_COORDINATES: Record<string, [number, number]> = {
   TZ: [34.8888, -6.3690], // Tanzania
   UG: [32.2903, 1.3733], // Uganda
   IT: [12.5674, 41.8719], // Italy
+  NZ: [174.8860, -40.9006], // New Zealand
+  IE: [-8.2439, 53.4129], // Ireland
+  PH: [121.7740, 12.8797], // Philippines
+  SE: [18.6435, 60.1282], // Sweden
+  NO: [8.4689, 60.4720], // Norway
+  FI: [25.7482, 61.9241], // Finland
+  DK: [9.5018, 56.2639], // Denmark
+  GR: [21.8243, 39.0742], // Greece
+  EC: [-78.1834, -1.8312], // Ecuador
+  BO: [-63.5887, -16.2902], // Bolivia
+  UY: [-55.7658, -32.5228], // Uruguay
+  PY: [-58.4438, -23.4425], // Paraguay
+  CU: [-77.7812, 21.5218], // Cuba
 };
 
 export interface ProcessedCountryData {
