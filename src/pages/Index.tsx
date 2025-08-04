@@ -94,16 +94,18 @@ const Index = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Language Selector Sidebar */}
-          <div className="lg:col-span-1 space-y-4">
-            <LanguageSelector
-              selectedLanguages={selectedLanguages}
-              onLanguageToggle={handleLanguageToggle}
-            />
-            <SnapshotControls 
-              statsRef={statsRef}
-              mapRef={mapRef}
-              selectedLanguages={selectedLanguages}
-            />
+          <div className="lg:col-span-1">
+            <div className="lg:sticky lg:top-4 space-y-4">
+              <LanguageSelector
+                selectedLanguages={selectedLanguages}
+                onLanguageToggle={handleLanguageToggle}
+              />
+              <SnapshotControls 
+                statsRef={statsRef}
+                mapRef={mapRef}
+                selectedLanguages={selectedLanguages}
+              />
+            </div>
           </div>
 
           {/* Main Dashboard - Vertically Stacked Content */}
