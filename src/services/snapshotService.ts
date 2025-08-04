@@ -33,6 +33,9 @@ class SnapshotService {
   }
 
   async captureMapboxCanvas(mapContainer: HTMLElement): Promise<HTMLCanvasElement> {
+    // Wait for map to be fully rendered
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
     // Get the Mapbox canvas element
     const mapCanvas = mapContainer.querySelector('canvas') as HTMLCanvasElement;
     
@@ -40,21 +43,41 @@ class SnapshotService {
       throw new Error('Mapbox canvas not found');
     }
 
-    // Create a new canvas with the same dimensions
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    
-    if (!ctx) {
-      throw new Error('Could not get canvas context');
+    // Wait for any pending map operations
+    await new Promise(resolve => setTimeout(resolve, 200));
+
+    // Try to get canvas data URL directly from Mapbox
+    try {
+      const dataURL = mapCanvas.toDataURL('image/png');
+      
+      if (dataURL === 'data:,') {
+        throw new Error('Canvas is blank or tainted');
+      }
+
+      // Create canvas from data URL
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      
+      if (!ctx) {
+        throw new Error('Could not get canvas context');
+      }
+
+      canvas.width = mapCanvas.width;
+      canvas.height = mapCanvas.height;
+
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => {
+          ctx.drawImage(img, 0, 0);
+          resolve(canvas);
+        };
+        img.onerror = reject;
+        img.src = dataURL;
+      });
+    } catch (error) {
+      console.error('Error capturing Mapbox canvas:', error);
+      throw error;
     }
-
-    canvas.width = mapCanvas.width;
-    canvas.height = mapCanvas.height;
-
-    // Draw the map canvas content
-    ctx.drawImage(mapCanvas, 0, 0);
-    
-    return canvas;
   }
 
   async downloadImage(element: HTMLElement, filename: string, options: SnapshotOptions = {}): Promise<void> {
@@ -63,14 +86,19 @@ class SnapshotService {
       
       // Check if this is a Mapbox container
       if (element.querySelector('canvas')) {
+        console.log('Capturing Mapbox canvas...');
         canvas = await this.captureMapboxCanvas(element);
       } else {
+        console.log('Capturing regular element...');
         canvas = await this.captureElement(element, options);
       }
 
       canvas.toBlob((blob) => {
         if (blob) {
+          console.log('Downloading image...', filename);
           saveAs(blob, `${filename}.png`);
+        } else {
+          throw new Error('Failed to create blob from canvas');
         }
       }, 'image/png');
     } catch (error) {
@@ -86,12 +114,22 @@ class SnapshotService {
     options: SnapshotOptions = {}
   ): Promise<void> {
     try {
-      // Capture both elements
+      console.log('Starting PDF generation...');
+      // Capture both elements with better error handling
       const [statsCanvas, mapCanvas] = await Promise.all([
-        this.captureElement(statsElement, options),
+        this.captureElement(statsElement, options).catch(err => {
+          console.error('Stats capture failed:', err);
+          throw new Error('Failed to capture language insights');
+        }),
         mapElement.querySelector('canvas') 
-          ? this.captureMapboxCanvas(mapElement)
-          : this.captureElement(mapElement, options)
+          ? this.captureMapboxCanvas(mapElement).catch(err => {
+              console.error('Map capture failed:', err);
+              throw new Error('Failed to capture map');
+            })
+          : this.captureElement(mapElement, options).catch(err => {
+              console.error('Map element capture failed:', err);
+              throw new Error('Failed to capture map element');
+            })
       ]);
 
       // Create PDF

@@ -86,7 +86,7 @@ const SnapshotControls: React.FC<SnapshotControlsProps> = ({
   const hasSelectedLanguages = selectedLanguages.length > 0;
 
   return (
-    <Card className="shadow-card-custom">
+    <Card className="shadow-card-custom sticky top-4">
       <CardContent className="p-4">
         <div className="flex items-center gap-2 mb-3">
           <Download className="w-4 h-4 text-muted-foreground" />
