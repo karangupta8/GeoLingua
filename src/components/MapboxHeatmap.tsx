@@ -15,7 +15,7 @@ interface MapboxHeatmapProps {
   selectedLanguages: string[];
 }
 
-const MapboxHeatmap: React.FC<MapboxHeatmapProps> = ({ selectedLanguages }) => {
+const MapboxHeatmap = React.forwardRef<HTMLDivElement, MapboxHeatmapProps>(({ selectedLanguages }, ref) => {
   const { t } = useTranslation(['dashboard', 'countries']);
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
@@ -473,7 +473,7 @@ const MapboxHeatmap: React.FC<MapboxHeatmapProps> = ({ selectedLanguages }) => {
   }
 
   return (
-    <div className="space-y-4">
+    <div ref={ref} id="mapbox-heatmap" className="space-y-4">
       {/* Controls */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
@@ -559,6 +559,8 @@ const MapboxHeatmap: React.FC<MapboxHeatmapProps> = ({ selectedLanguages }) => {
       </Card>
     </div>
   );
-};
+});
 
-export default MapboxHeatmap;
+MapboxHeatmap.displayName = 'MapboxHeatmap';
+
+export default React.memo(MapboxHeatmap);

@@ -9,7 +9,7 @@ interface StatsDashboardProps {
   selectedLanguages: string[];
 }
 
-const StatsDashboard: React.FC<StatsDashboardProps> = ({ selectedLanguages }) => {
+const StatsDashboard = React.forwardRef<HTMLDivElement, StatsDashboardProps>(({ selectedLanguages }, ref) => {
   const { t } = useTranslation(['dashboard', 'common']);
   const [stats, setStats] = useState({ totalSpeakers: 0, countries: new Set<string>(), globalCoverage: 0 });
   const [isLoading, setIsLoading] = useState(false);
@@ -94,7 +94,7 @@ const StatsDashboard: React.FC<StatsDashboardProps> = ({ selectedLanguages }) =>
   }
 
   return (
-    <div className="space-y-6">
+    <div ref={ref} id="stats-dashboard" className="space-y-6">
       {/* Simplified Communication Reach */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {statsCards.map((card, index) => (
@@ -134,6 +134,8 @@ const StatsDashboard: React.FC<StatsDashboardProps> = ({ selectedLanguages }) =>
       )}
     </div>
   );
-};
+});
 
-export default StatsDashboard;
+StatsDashboard.displayName = 'StatsDashboard';
+
+export default React.memo(StatsDashboard);

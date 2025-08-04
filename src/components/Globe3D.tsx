@@ -645,9 +645,6 @@ const Globe3D: React.FC<Globe3DProps> = ({ selectedLanguages }) => {
               maxPolarAngle={Math.PI}
               minPolarAngle={0}
               target={[0, 0, 0]}
-              defaultAzimuthAngle={0}
-              defaultPolarAngle={Math.PI / 2}
-              defaultDistance={5}
             />
           </Canvas>
 

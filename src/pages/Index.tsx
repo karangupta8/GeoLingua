@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import LanguageSelector from '@/components/LanguageSelector';
 import StatsDashboard from '@/components/StatsDashboard';
 import WorldMap from '@/components/WorldMap';
 import CountryBreakdown from '@/components/CountryBreakdown';
+import SnapshotControls from '@/components/SnapshotControls';
 import { Globe } from 'lucide-react';
 import MapboxHeatmap from '@/components/MapboxHeatmap';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
@@ -11,6 +12,8 @@ import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 const Index = () => {
   const { t } = useTranslation(['hero', 'navigation']);
   const [selectedLanguages, setSelectedLanguages] = React.useState<string[]>([]);
+  const statsRef = useRef<HTMLDivElement>(null);
+  const mapRef = useRef<HTMLDivElement>(null);
 
   const handleLanguageToggle = (languageId: string) => {
     setSelectedLanguages(prev => 
@@ -91,10 +94,15 @@ const Index = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Language Selector Sidebar */}
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-1 space-y-4">
             <LanguageSelector
               selectedLanguages={selectedLanguages}
               onLanguageToggle={handleLanguageToggle}
+            />
+            <SnapshotControls 
+              statsRef={statsRef}
+              mapRef={mapRef}
+              selectedLanguages={selectedLanguages}
             />
           </div>
 
@@ -105,7 +113,7 @@ const Index = () => {
               <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
                 📊 Language Insights
               </h2>
-              <StatsDashboard selectedLanguages={selectedLanguages} />
+              <StatsDashboard ref={statsRef} selectedLanguages={selectedLanguages} />
             </div>
 
             {/* Interactive Heatmap Section */}
@@ -113,7 +121,7 @@ const Index = () => {
               <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
                 🗺️ Language Distribution Heatmap
               </h2>
-              <MapboxHeatmap selectedLanguages={selectedLanguages} />
+              <MapboxHeatmap ref={mapRef} selectedLanguages={selectedLanguages} />
             </div>
 
             {/* Country Breakdown Section */}
