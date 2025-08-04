@@ -142,11 +142,11 @@ const MapboxHeatmap = React.forwardRef<HTMLDivElement, MapboxHeatmapProps>(({ se
     }
   }, [languages, selectedLanguages, mapLoaded]);
 
-  // Initialize map
+  // Initialize map - simplified and clean
   useEffect(() => {
     if (!mapContainer.current || !isMapboxConfigured) return;
 
-    console.log('Initializing map...');
+    console.log('Initializing map with style:', mapStyle);
     setMapLoaded(false);
     setMapDataLoaded(false);
 
@@ -204,9 +204,24 @@ const MapboxHeatmap = React.forwardRef<HTMLDivElement, MapboxHeatmapProps>(({ se
       });
     }
 
-    // Auto-rotation for globe mode
+    // Stop rotation on user interaction
+    const stopRotation = () => setIsRotating(false);
+    map.current.on('mousedown', stopRotation);
+    map.current.on('touchstart', stopRotation);
+
+    return () => {
+      map.current?.remove();
+      setMapLoaded(false);
+      setMapDataLoaded(false);
+    };
+  }, [mapStyle, isMapboxConfigured]); // Removed isRotating from dependencies
+
+  // Separate useEffect to handle rotation
+  useEffect(() => {
+    if (!map.current || !mapLoaded || mapStyle !== 'globe') return;
+
     let rotationAnimation: number;
-    if (mapStyle === 'globe' && isRotating) {
+    if (isRotating) {
       const rotateGlobe = () => {
         if (map.current && isRotating) {
           const center = map.current.getCenter();
@@ -218,20 +233,12 @@ const MapboxHeatmap = React.forwardRef<HTMLDivElement, MapboxHeatmapProps>(({ se
       rotateGlobe();
     }
 
-    // Stop rotation on user interaction
-    const stopRotation = () => setIsRotating(false);
-    map.current.on('mousedown', stopRotation);
-    map.current.on('touchstart', stopRotation);
-
     return () => {
       if (rotationAnimation) {
         cancelAnimationFrame(rotationAnimation);
       }
-      map.current?.remove();
-      setMapLoaded(false);
-      setMapDataLoaded(false);
     };
-  }, [mapStyle, isRotating, isMapboxConfigured]);
+  }, [isRotating, mapLoaded, mapStyle]);
 
   // Update map data when dependencies change
   useEffect(() => {
@@ -392,32 +399,6 @@ const MapboxHeatmap = React.forwardRef<HTMLDivElement, MapboxHeatmapProps>(({ se
   const toggleMapStyle = () => {
     const newStyle = mapStyle === 'globe' ? 'flat' : 'globe';
     setMapStyle(newStyle);
-    
-    if (map.current) {
-      // Use setProjection instead of recreating the map
-      map.current.setProjection(newStyle === 'globe' ? 'globe' : 'mercator');
-      
-      // Update pitch and fog for the new projection
-      if (newStyle === 'globe') {
-        map.current.setPitch(DEFAULT_MAP_CONFIG.pitch);
-        map.current.setFog({
-          color: 'rgb(186, 210, 235)',
-          'high-color': 'rgb(36, 92, 223)',
-          'horizon-blend': 0.02,
-        });
-      } else {
-        map.current.setPitch(0);
-        map.current.setFog(null);
-      }
-      
-      // Better centering for globe mode
-      map.current.easeTo({
-        center: newStyle === 'globe' ? [20, 20] : [0, 0],
-        zoom: DEFAULT_MAP_CONFIG.zoom,
-        bearing: DEFAULT_MAP_CONFIG.bearing,
-        duration: 1000,
-      });
-    }
   };
 
   const resetRotation = () => {
