@@ -98,11 +98,18 @@ const Index = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Language Selector Sidebar */}
           <div className="lg:col-span-1">
-            <div className="lg:sticky lg:top-4 lg:max-h-[calc(100vh-2rem)] lg:overflow-y-auto space-y-4">
+            <div className="lg:sticky lg:top-4 lg:max-h-[calc(100vh-2rem)] lg:overflow-y-auto">
               <LanguageSelector
                 selectedLanguages={selectedLanguages}
                 onLanguageToggle={handleLanguageToggle}
               />
+            </div>
+          </div>
+
+          {/* Main Dashboard - Vertically Stacked Content */}
+          <div className="lg:col-span-2 space-y-8 relative">
+            {/* Floating Export Data Controls */}
+            <div className="absolute top-0 right-0 z-20">
               <SnapshotControls 
                 statsRef={statsRef}
                 enhancedStatsRef={enhancedStatsRef}
@@ -111,10 +118,6 @@ const Index = () => {
                 selectedLanguages={selectedLanguages}
               />
             </div>
-          </div>
-
-          {/* Main Dashboard - Vertically Stacked Content */}
-          <div className="lg:col-span-2 space-y-8">
             {/* Statistics Dashboard Section */}
             <div className="space-y-4">
               <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
