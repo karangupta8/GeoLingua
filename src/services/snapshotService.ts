@@ -115,6 +115,7 @@ class SnapshotService {
   ): Promise<void> {
     try {
       console.log('Starting PDF generation...');
+      
       // Capture both elements with better error handling
       const [statsCanvas, mapCanvas] = await Promise.all([
         this.captureElement(statsElement, options).catch(err => {
