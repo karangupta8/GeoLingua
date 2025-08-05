@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import LanguageSelector from '@/components/LanguageSelector';
 import StatsDashboard from '@/components/StatsDashboard';
+import EnhancedStatsDashboard from '@/components/EnhancedStatsDashboard';
 import WorldMap from '@/components/WorldMap';
 import CountryBreakdown from '@/components/CountryBreakdown';
 import SnapshotControls from '@/components/SnapshotControls';
@@ -13,7 +14,9 @@ const Index = () => {
   const { t } = useTranslation(['hero', 'navigation']);
   const [selectedLanguages, setSelectedLanguages] = React.useState<string[]>([]);
   const statsRef = useRef<HTMLDivElement>(null);
+  const enhancedStatsRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<HTMLDivElement>(null);
+  const countryBreakdownRef = useRef<HTMLDivElement>(null);
 
   const handleLanguageToggle = (languageId: string) => {
     setSelectedLanguages(prev => 
@@ -95,14 +98,16 @@ const Index = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Language Selector Sidebar */}
           <div className="lg:col-span-1">
-            <div className="lg:sticky lg:top-4 space-y-4">
+            <div className="lg:sticky lg:top-4 lg:max-h-[calc(100vh-2rem)] lg:overflow-y-auto space-y-4">
               <LanguageSelector
                 selectedLanguages={selectedLanguages}
                 onLanguageToggle={handleLanguageToggle}
               />
               <SnapshotControls 
                 statsRef={statsRef}
+                enhancedStatsRef={enhancedStatsRef}
                 mapRef={mapRef}
+                countryBreakdownRef={countryBreakdownRef}
                 selectedLanguages={selectedLanguages}
               />
             </div>
@@ -131,7 +136,12 @@ const Index = () => {
               <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
                 🏆 Country Breakdown
               </h2>
-              <CountryBreakdown selectedLanguages={selectedLanguages} />
+              <CountryBreakdown ref={countryBreakdownRef} selectedLanguages={selectedLanguages} />
+            </div>
+            
+            {/* Hidden Enhanced Stats for Export */}
+            <div style={{ position: 'absolute', left: '-9999px', top: '-9999px' }}>
+              <EnhancedStatsDashboard ref={enhancedStatsRef} selectedLanguages={selectedLanguages} />
             </div>
           </div>
         </div>

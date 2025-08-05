@@ -85,7 +85,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
 
   if (isLoading) {
     return (
-      <Card className="sticky top-4 shadow-card-custom">
+      <Card className="shadow-card-custom">
         <CardContent className="p-8 text-center">
           <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-primary" />
           <p className="text-muted-foreground">Loading languages...</p>
@@ -96,7 +96,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
 
   if (error) {
     return (
-      <Card className="sticky top-4 shadow-card-custom">
+      <Card className="shadow-card-custom">
         <CardContent className="p-8 text-center">
           <div className="space-y-4">
             <p className="text-destructive">{error}</p>
@@ -111,7 +111,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
   }
 
   return (
-    <Card className="sticky top-4 shadow-card-custom">
+    <Card className="shadow-card-custom">
       <CardHeader className="space-y-4">
         <div>
           <CardTitle className="flex items-center space-x-2">
