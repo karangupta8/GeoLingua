@@ -9,7 +9,8 @@ interface CountryBreakdownProps {
   selectedLanguages: string[];
 }
 
-const CountryBreakdown: React.FC<CountryBreakdownProps> = ({ selectedLanguages }) => {
+const CountryBreakdown = React.forwardRef<HTMLDivElement, CountryBreakdownProps>(
+  ({ selectedLanguages }, ref) => {
   const [allCountries, setAllCountries] = useState<Array<{
     country: CountryInfo;
     language: string;
@@ -120,7 +121,7 @@ const CountryBreakdown: React.FC<CountryBreakdownProps> = ({ selectedLanguages }
   }
 
   return (
-    <Card className="shadow-card-custom">
+    <Card ref={ref} className="shadow-card-custom">
       <CardHeader className="text-center">
         <CardTitle className="flex items-center justify-center space-x-2">
           <Flag className="w-5 h-5 text-primary" />
@@ -230,6 +231,8 @@ const CountryBreakdown: React.FC<CountryBreakdownProps> = ({ selectedLanguages }
       </CardContent>
     </Card>
   );
-};
+});
+
+CountryBreakdown.displayName = 'CountryBreakdown';
 
 export default CountryBreakdown;

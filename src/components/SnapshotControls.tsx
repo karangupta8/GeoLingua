@@ -8,13 +8,17 @@ import { useToast } from '@/hooks/use-toast';
 
 interface SnapshotControlsProps {
   statsRef: React.RefObject<HTMLDivElement>;
+  enhancedStatsRef: React.RefObject<HTMLDivElement>;
   mapRef: React.RefObject<HTMLDivElement>;
+  countryBreakdownRef: React.RefObject<HTMLDivElement>;
   selectedLanguages: string[];
 }
 
 const SnapshotControls: React.FC<SnapshotControlsProps> = ({
   statsRef,
+  enhancedStatsRef,
   mapRef,
+  countryBreakdownRef,
   selectedLanguages
 }) => {
   const { t } = useTranslation(['common']);
@@ -22,7 +26,7 @@ const SnapshotControls: React.FC<SnapshotControlsProps> = ({
   const [isLoading, setIsLoading] = useState<string | null>(null);
 
   const handleDownloadImage = async (type: 'stats' | 'map') => {
-    if (!statsRef.current || !mapRef.current) {
+    if (!enhancedStatsRef.current || !mapRef.current) {
       toast({
         title: t('common:error'),
         description: 'Components not ready for capture',
@@ -33,14 +37,14 @@ const SnapshotControls: React.FC<SnapshotControlsProps> = ({
 
     setIsLoading(type);
     try {
-      const element = type === 'stats' ? statsRef.current : mapRef.current;
+      const element = type === 'stats' ? enhancedStatsRef.current : mapRef.current;
       const filename = `${snapshotService.generateFilename(selectedLanguages)}-${type}`;
       
       await snapshotService.downloadImage(element, filename);
       
       toast({
         title: 'Success',
-        description: `${type === 'stats' ? 'Language insights' : 'Map'} image downloaded`,
+        description: `${type === 'stats' ? 'Enhanced language insights' : 'Map'} image downloaded`,
       });
     } catch (error) {
       toast({
@@ -54,7 +58,7 @@ const SnapshotControls: React.FC<SnapshotControlsProps> = ({
   };
 
   const handleDownloadPDF = async () => {
-    if (!statsRef.current || !mapRef.current) {
+    if (!enhancedStatsRef.current || !mapRef.current || !countryBreakdownRef.current) {
       toast({
         title: t('common:error'),
         description: 'Components not ready for capture',
@@ -66,11 +70,16 @@ const SnapshotControls: React.FC<SnapshotControlsProps> = ({
     setIsLoading('pdf');
     try {
       const filename = snapshotService.generateFilename(selectedLanguages);
-      await snapshotService.downloadPDF(statsRef.current, mapRef.current, filename);
+      await snapshotService.downloadComprehensivePDF(
+        enhancedStatsRef.current, 
+        mapRef.current, 
+        countryBreakdownRef.current,
+        filename
+      );
       
       toast({
         title: 'Success',
-        description: 'PDF report downloaded',
+        description: 'Comprehensive PDF report downloaded with all sections',
       });
     } catch (error) {
       toast({
@@ -106,7 +115,7 @@ const SnapshotControls: React.FC<SnapshotControlsProps> = ({
             ) : (
               <FileImage className="w-3 h-3" />
             )}
-            <span className="text-xs">Insights PNG</span>
+            <span className="text-xs">Insights + Languages PNG</span>
           </Button>
           
           <Button
@@ -137,7 +146,7 @@ const SnapshotControls: React.FC<SnapshotControlsProps> = ({
           ) : (
             <FileText className="w-3 h-3" />
           )}
-          <span className="text-xs">Full Report PDF</span>
+          <span className="text-xs">Complete Report PDF</span>
         </Button>
         
         {!hasSelectedLanguages && (

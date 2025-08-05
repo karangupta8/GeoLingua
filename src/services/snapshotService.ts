@@ -167,11 +167,108 @@ class SnapshotService {
     }
   }
 
+  async downloadComprehensivePDF(
+    statsElement: HTMLElement,
+    mapElement: HTMLElement,
+    countryElement: HTMLElement,
+    filename: string,
+    options: SnapshotOptions = {}
+  ): Promise<void> {
+    try {
+      console.log('Starting comprehensive PDF generation...');
+      
+      // Capture all elements
+      const [statsCanvas, mapCanvas, countryCanvas] = await Promise.all([
+        this.captureElement(statsElement, options).catch(err => {
+          console.error('Enhanced stats capture failed:', err);
+          throw new Error('Failed to capture enhanced language insights');
+        }),
+        mapElement.querySelector('canvas') 
+          ? this.captureMapboxCanvas(mapElement).catch(err => {
+              console.error('Map capture failed:', err);
+              throw new Error('Failed to capture map');
+            })
+          : this.captureElement(mapElement, options).catch(err => {
+              console.error('Map element capture failed:', err);
+              throw new Error('Failed to capture map element');
+            }),
+        this.captureElement(countryElement, options).catch(err => {
+          console.error('Country breakdown capture failed:', err);
+          throw new Error('Failed to capture country breakdown');
+        })
+      ]);
+
+      // Create PDF
+      const pdf = new jsPDF('portrait', 'mm', 'a4');
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const margin = 10;
+      const contentWidth = pageWidth - (2 * margin);
+      
+      // Page 1: Enhanced Language Insights
+      pdf.setFontSize(20);
+      pdf.text('Complete Language Analysis Report', pageWidth / 2, 20, { align: 'center' });
+      
+      const statsImgData = statsCanvas.toDataURL('image/png');
+      const statsAspectRatio = statsCanvas.width / statsCanvas.height;
+      const statsHeight = contentWidth / statsAspectRatio;
+      
+      pdf.addImage(statsImgData, 'PNG', margin, 30, contentWidth, Math.min(statsHeight, pageHeight - 50));
+      
+      // Page 2: Map Visualization
+      pdf.addPage();
+      pdf.setFontSize(16);
+      pdf.text('Language Distribution Map', pageWidth / 2, 20, { align: 'center' });
+      
+      const mapImgData = mapCanvas.toDataURL('image/png');
+      const mapAspectRatio = mapCanvas.width / mapCanvas.height;
+      const mapHeight = contentWidth / mapAspectRatio;
+      
+      pdf.addImage(mapImgData, 'PNG', margin, 30, contentWidth, Math.min(mapHeight, pageHeight - 50));
+      
+      // Page 3: Country Breakdown
+      pdf.addPage();
+      pdf.setFontSize(16);
+      pdf.text('Detailed Country Analysis', pageWidth / 2, 20, { align: 'center' });
+      
+      const countryImgData = countryCanvas.toDataURL('image/png');
+      const countryAspectRatio = countryCanvas.width / countryCanvas.height;
+      const countryHeight = contentWidth / countryAspectRatio;
+      
+      // If country breakdown is very long, fit to page height
+      const maxCountryHeight = pageHeight - 50;
+      if (countryHeight > maxCountryHeight) {
+        const scaledWidth = contentWidth * (maxCountryHeight / countryHeight);
+        pdf.addImage(countryImgData, 'PNG', (pageWidth - scaledWidth) / 2, 30, scaledWidth, maxCountryHeight);
+      } else {
+        pdf.addImage(countryImgData, 'PNG', margin, 30, contentWidth, countryHeight);
+      }
+      
+      // Save PDF
+      pdf.save(`${filename}.pdf`);
+    } catch (error) {
+      console.error('Error creating comprehensive PDF:', error);
+      throw error;
+    }
+  }
+
   generateFilename(selectedLanguages: string[]): string {
     const timestamp = new Date().toISOString().split('T')[0];
-    const languageCode = selectedLanguages.length > 0 
-      ? selectedLanguages.slice(0, 3).join('-') 
-      : 'global';
+    if (selectedLanguages.length === 0) {
+      return `language-insights-global-${timestamp}`;
+    }
+    
+    // Use actual language names if available, otherwise use IDs
+    const languageNames = selectedLanguages.slice(0, 3).map(id => {
+      // Try to get language name from the DOM or use the ID
+      const element = document.querySelector(`[data-language-id="${id}"]`);
+      if (element) {
+        return element.textContent?.toLowerCase().replace(/\s+/g, '-') || id;
+      }
+      return id;
+    });
+    
+    const languageCode = languageNames.join('-');
     return `language-insights-${languageCode}-${timestamp}`;
   }
 }
