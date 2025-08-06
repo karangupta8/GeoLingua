@@ -295,9 +295,15 @@ function RealisticGlobe({ countryData, hoveredCountry, setHoveredCountry }: {
   const globeRef = useRef<THREE.Mesh>(null);
   const atmosphereRef = useRef<THREE.Mesh>(null);
   const arcsRef = useRef<THREE.Group>(null);
-  const [autoRotate, setAutoRotate] = useState(true);
+  const [autoRotate, setAutoRotate] = useState(false);
   const [timeOffset, setTimeOffset] = useState(0);
   const { camera } = useThree();
+
+  // Start auto-rotation after a delay to let users see the centered view
+  useEffect(() => {
+    const timer = setTimeout(() => setAutoRotate(true), 3000);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Pause auto-rotation when user interacts
   const handleInteractionStart = () => setAutoRotate(false);
@@ -587,7 +593,7 @@ const Globe3D: React.FC<Globe3DProps> = ({ selectedLanguages }) => {
       <Card className="p-4">
         <div className="h-[700px] relative flex items-center justify-center">
             <Canvas 
-            camera={{ position: [0, 0, 5], fov: 60 }} // Center the camera position
+            camera={{ position: [0, 2, 6], fov: 50 }}
             shadows
             gl={{ antialias: true, alpha: true }}
             style={{ width: '100%', height: '100%' }}
@@ -635,7 +641,7 @@ const Globe3D: React.FC<Globe3DProps> = ({ selectedLanguages }) => {
               enableRotate={true}
               enableDamping={true}
               dampingFactor={0.03}
-              minDistance={2.5}
+              minDistance={3}
               maxDistance={12}
               rotateSpeed={0.5}
               zoomSpeed={0.8}
