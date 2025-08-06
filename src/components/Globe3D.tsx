@@ -299,6 +299,15 @@ function RealisticGlobe({ countryData, hoveredCountry, setHoveredCountry }: {
   const [timeOffset, setTimeOffset] = useState(0);
   const { camera } = useThree();
 
+  // Initialize camera position and rotation for optimal viewing
+  useEffect(() => {
+    if (camera) {
+      camera.position.set(0, 1, 6);
+      camera.lookAt(0, 0, 0);
+      camera.updateProjectionMatrix();
+    }
+  }, [camera]);
+
   // Start auto-rotation after a delay to let users see the centered view
   useEffect(() => {
     const timer = setTimeout(() => setAutoRotate(true), 3000);
@@ -593,9 +602,9 @@ const Globe3D: React.FC<Globe3DProps> = ({ selectedLanguages }) => {
       <Card className="p-4">
         <div className="h-[700px] relative flex items-center justify-center">
             <Canvas 
-            camera={{ position: [0, 2, 6], fov: 50 }}
+            camera={{ position: [0, 1, 6], fov: 50, near: 0.1, far: 1000 }}
             shadows
-            gl={{ antialias: true, alpha: true }}
+            gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
             style={{ width: '100%', height: '100%' }}
           >
             {/* Realistic lighting setup for day/night */}
