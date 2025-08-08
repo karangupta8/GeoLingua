@@ -158,7 +158,7 @@ const MapboxHeatmap = React.forwardRef<HTMLDivElement, MapboxHeatmapProps>(({ se
       style: MAPBOX_STYLES.dark,
       projection: mapStyle === 'globe' ? 'globe' : 'mercator',
       zoom: DEFAULT_MAP_CONFIG.zoom,
-      center: DEFAULT_MAP_CONFIG.center,
+      center: [0, 15], // Better center for visual balance
       pitch: mapStyle === 'globe' ? DEFAULT_MAP_CONFIG.pitch : 0,
       bearing: DEFAULT_MAP_CONFIG.bearing,
     });
@@ -178,12 +178,12 @@ const MapboxHeatmap = React.forwardRef<HTMLDivElement, MapboxHeatmapProps>(({ se
       
       // Ensure proper centering on initial load
       if (map.current) {
-        const center = mapStyle === 'globe' ? [20, 20] : [0, 0];
+        const center = mapStyle === 'globe' ? [0, 15] : [0, 0]; // Better center for visual balance
         map.current.easeTo({
           center: center as [number, number],
           zoom: DEFAULT_MAP_CONFIG.zoom,
           bearing: DEFAULT_MAP_CONFIG.bearing,
-          pitch: mapStyle === 'globe' ? DEFAULT_MAP_CONFIG.pitch : 0,
+          pitch: mapStyle === 'globe' ? 30 : 0, // Reduced pitch for better viewing
           duration: 500,
         });
       }
@@ -404,12 +404,12 @@ const MapboxHeatmap = React.forwardRef<HTMLDivElement, MapboxHeatmapProps>(({ se
   const resetRotation = () => {
     setIsRotating(true);
     if (map.current) {
-      const center = mapStyle === 'globe' ? [20, 20] : [0, 0];
+      const center = mapStyle === 'globe' ? [0, 15] : [0, 0]; // Better center for visual balance
       map.current.easeTo({
         center: center as [number, number],
         zoom: DEFAULT_MAP_CONFIG.zoom,
         bearing: DEFAULT_MAP_CONFIG.bearing,
-        pitch: mapStyle === 'globe' ? DEFAULT_MAP_CONFIG.pitch : 0,
+        pitch: mapStyle === 'globe' ? 30 : 0, // Reduced pitch for better viewing
         duration: 1000,
       });
     }
@@ -498,7 +498,7 @@ const MapboxHeatmap = React.forwardRef<HTMLDivElement, MapboxHeatmapProps>(({ se
       <Card className="overflow-hidden">
         <div 
           ref={mapContainer} 
-          className="w-full h-[600px] rounded-lg"
+          className="w-full h-[700px] rounded-lg flex items-center justify-center p-4"
         />
       </Card>
 
