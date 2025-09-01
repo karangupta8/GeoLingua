@@ -12,9 +12,9 @@ export const MAPBOX_STYLES = {
 
 // Default map settings
 export const DEFAULT_MAP_CONFIG = {
-  center: [0, 0] as [number, number], // Changed from [0, 20] to [0, 0] for true center
-  zoom: 1.5,
-  pitch: 45,
+  center: [0, 30] as [number, number], // Optimal center for visual balance showing Europe, Africa, and Asia
+  zoom: 1.8,
+  pitch: 25,
   bearing: 0,
   projection: 'globe' as const,
   style: MAPBOX_STYLES.light,
