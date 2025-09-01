@@ -27,6 +27,8 @@ const MapboxHeatmap = React.forwardRef<HTMLDivElement, MapboxHeatmapProps>(({ se
   const [isRotating, setIsRotating] = useState(true);
   const [mapLoaded, setMapLoaded] = useState(false);
   const [mapDataLoaded, setMapDataLoaded] = useState(false);
+  const [mapInitialized, setMapInitialized] = useState(false);
+  const [initRetryCount, setInitRetryCount] = useState(0);
 
   // Check if Mapbox token is configured
   const isMapboxConfigured = MAPBOX_ACCESS_TOKEN && MAPBOX_ACCESS_TOKEN.length > 0;
@@ -142,11 +144,23 @@ const MapboxHeatmap = React.forwardRef<HTMLDivElement, MapboxHeatmapProps>(({ se
     }
   }, [languages, selectedLanguages, mapLoaded]);
 
-  // Initialize map - simplified and clean
+  // Initial map initialization - runs once
   useEffect(() => {
-    if (!mapContainer.current || !isMapboxConfigured) return;
+    if (!mapContainer.current || !isMapboxConfigured || mapInitialized) return;
 
-    console.log('Initializing map with style:', mapStyle);
+    // Check if container is visible and has dimensions
+    const rect = mapContainer.current.getBoundingClientRect();
+    if (rect.width === 0 || rect.height === 0) {
+      console.log('Container not ready, retrying...', { width: rect.width, height: rect.height });
+      if (initRetryCount < 3) {
+        const retryTimer = setTimeout(() => {
+          setInitRetryCount(prev => prev + 1);
+        }, 500);
+        return () => clearTimeout(retryTimer);
+      }
+    }
+
+    console.log('Initializing map for first time with style:', mapStyle);
     setMapLoaded(false);
     setMapDataLoaded(false);
 
@@ -173,20 +187,9 @@ const MapboxHeatmap = React.forwardRef<HTMLDivElement, MapboxHeatmapProps>(({ se
 
     // Handle map load event
     const handleMapLoad = () => {
-      console.log('Map loaded successfully');
+      console.log('Map loaded successfully on initial load');
       setMapLoaded(true);
-      
-      // Ensure proper centering on initial load
-      if (map.current) {
-        const center = mapStyle === 'globe' ? DEFAULT_MAP_CONFIG.center : [0, 0];
-        map.current.easeTo({
-          center: center as [number, number],
-          zoom: DEFAULT_MAP_CONFIG.zoom,
-          bearing: DEFAULT_MAP_CONFIG.bearing,
-          pitch: mapStyle === 'globe' ? DEFAULT_MAP_CONFIG.pitch : 0,
-          duration: 500,
-        });
-      }
+      setMapInitialized(true);
     };
 
     map.current.on('load', handleMapLoad);
@@ -210,11 +213,54 @@ const MapboxHeatmap = React.forwardRef<HTMLDivElement, MapboxHeatmapProps>(({ se
     map.current.on('touchstart', stopRotation);
 
     return () => {
-      map.current?.remove();
+      if (map.current) {
+        map.current.remove();
+        map.current = null;
+      }
       setMapLoaded(false);
       setMapDataLoaded(false);
+      setMapInitialized(false);
     };
-  }, [mapStyle, isMapboxConfigured]); // Removed isRotating from dependencies
+  }, [isMapboxConfigured, mapInitialized, initRetryCount]);
+
+  // Handle map style changes - separate from initialization
+  useEffect(() => {
+    if (!map.current || !mapInitialized || !mapLoaded) return;
+
+    console.log('Changing map style to:', mapStyle);
+
+    // Update projection
+    map.current.setProjection(mapStyle === 'globe' ? 'globe' : 'mercator');
+
+    // Update view parameters
+    const center = mapStyle === 'globe' ? DEFAULT_MAP_CONFIG.center : [0, 0];
+    map.current.easeTo({
+      center: center as [number, number],
+      zoom: DEFAULT_MAP_CONFIG.zoom,
+      bearing: DEFAULT_MAP_CONFIG.bearing,
+      pitch: mapStyle === 'globe' ? DEFAULT_MAP_CONFIG.pitch : 0,
+      duration: 1000,
+    });
+
+    // Handle atmosphere for globe mode
+    if (mapStyle === 'globe') {
+      // Small delay to ensure projection change is complete
+      setTimeout(() => {
+        if (map.current) {
+          map.current.setFog({
+            color: 'rgb(186, 210, 235)',
+            'high-color': 'rgb(36, 92, 223)',
+            'horizon-blend': 0.02,
+          });
+        }
+      }, 100);
+    } else {
+      // Remove fog for flat map
+      if (map.current) {
+        map.current.setFog(null);
+      }
+    }
+  }, [mapStyle, mapInitialized, mapLoaded]);
 
   // Separate useEffect to handle rotation
   useEffect(() => {
