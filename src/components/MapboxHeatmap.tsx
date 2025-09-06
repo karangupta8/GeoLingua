@@ -27,6 +27,9 @@ const MapboxHeatmap = React.forwardRef<HTMLDivElement, MapboxHeatmapProps>(({ se
   const [isRotating, setIsRotating] = useState(true);
   const [mapLoaded, setMapLoaded] = useState(false);
   const [mapDataLoaded, setMapDataLoaded] = useState(false);
+  const [containerReady, setContainerReady] = useState(false);
+  const [initRetryCount, setInitRetryCount] = useState(0);
+  const [isInitializing, setIsInitializing] = useState(false);
 
   // Check if Mapbox token is configured
   const isMapboxConfigured = MAPBOX_ACCESS_TOKEN && MAPBOX_ACCESS_TOKEN.length > 0;
@@ -142,79 +145,177 @@ const MapboxHeatmap = React.forwardRef<HTMLDivElement, MapboxHeatmapProps>(({ se
     }
   }, [languages, selectedLanguages, mapLoaded]);
 
-  // Initialize map - simplified and clean
+  // Check container readiness with IntersectionObserver
   useEffect(() => {
     if (!mapContainer.current || !isMapboxConfigured) return;
 
+    const checkContainerReadiness = () => {
+      if (!mapContainer.current) return false;
+      
+      const rect = mapContainer.current.getBoundingClientRect();
+      const isVisible = rect.width > 0 && rect.height > 0;
+      
+      console.log('Container readiness check:', { 
+        isVisible, 
+        width: rect.width, 
+        height: rect.height,
+        element: !!mapContainer.current 
+      });
+      
+      return isVisible;
+    };
+
+    // Use IntersectionObserver to detect when container is visible
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && checkContainerReadiness()) {
+            console.log('Container is ready and visible');
+            setContainerReady(true);
+            observer.disconnect();
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    // Start observing immediately
+    if (mapContainer.current) {
+      observer.observe(mapContainer.current);
+    }
+
+    // Fallback: Check readiness after a delay
+    const fallbackTimer = setTimeout(() => {
+      if (checkContainerReadiness()) {
+        console.log('Container ready via fallback check');
+        setContainerReady(true);
+        observer.disconnect();
+      }
+    }, 100);
+
+    return () => {
+      observer.disconnect();
+      clearTimeout(fallbackTimer);
+    };
+  }, [isMapboxConfigured]);
+
+  // Initialize map when container is ready
+  useEffect(() => {
+    if (!containerReady || !isMapboxConfigured || isInitializing) return;
+    if (map.current) return; // Already initialized
+
     console.log('Initializing map with style:', mapStyle);
+    setIsInitializing(true);
     setMapLoaded(false);
     setMapDataLoaded(false);
 
-    // Initialize Mapbox
-    mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
-    
-    map.current = new mapboxgl.Map({
-      container: mapContainer.current,
-      style: MAPBOX_STYLES.dark,
-      projection: mapStyle === 'globe' ? 'globe' : 'mercator',
-      zoom: DEFAULT_MAP_CONFIG.zoom,
-      center: DEFAULT_MAP_CONFIG.center,
-      pitch: mapStyle === 'globe' ? DEFAULT_MAP_CONFIG.pitch : 0,
-      bearing: DEFAULT_MAP_CONFIG.bearing,
-    });
+    const initializeMap = () => {
+      try {
+        if (!mapContainer.current) {
+          throw new Error('Map container not available');
+        }
 
-    // Add navigation controls
-    map.current.addControl(
-      new mapboxgl.NavigationControl({
-        visualizePitch: true,
-      }),
-      'top-right'
-    );
-
-    // Handle map load event
-    const handleMapLoad = () => {
-      console.log('Map loaded successfully');
-      setMapLoaded(true);
-      
-      // Ensure proper centering on initial load
-      if (map.current) {
-        const center = mapStyle === 'globe' ? DEFAULT_MAP_CONFIG.center : [0, 0];
-        map.current.easeTo({
-          center: center as [number, number],
+        // Ensure Mapbox GL is loaded
+        if (!window.mapboxgl) {
+          console.log('Mapbox GL not loaded, setting access token');
+        }
+        mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
+        
+        // Store instance for debugging
+        (window as any).mapboxInstance = map.current;
+        
+        map.current = new mapboxgl.Map({
+          container: mapContainer.current,
+          style: MAPBOX_STYLES.dark,
+          projection: mapStyle === 'globe' ? 'globe' : 'mercator',
           zoom: DEFAULT_MAP_CONFIG.zoom,
-          bearing: DEFAULT_MAP_CONFIG.bearing,
+          center: DEFAULT_MAP_CONFIG.center,
           pitch: mapStyle === 'globe' ? DEFAULT_MAP_CONFIG.pitch : 0,
-          duration: 500,
+          bearing: DEFAULT_MAP_CONFIG.bearing,
         });
+
+        // Add navigation controls
+        map.current.addControl(
+          new mapboxgl.NavigationControl({
+            visualizePitch: true,
+          }),
+          'top-right'
+        );
+
+        // Handle map load event
+        const handleMapLoad = () => {
+          console.log('Map loaded successfully');
+          setMapLoaded(true);
+          setIsInitializing(false);
+        };
+
+        map.current.on('load', handleMapLoad);
+
+        // Add atmosphere for globe mode
+        if (mapStyle === 'globe') {
+          map.current.on('style.load', () => {
+            if (map.current) {
+              map.current.setFog({
+                color: 'rgb(186, 210, 235)',
+                'high-color': 'rgb(36, 92, 223)',
+                'horizon-blend': 0.02,
+              });
+            }
+          });
+        }
+
+        // Stop rotation on user interaction
+        const stopRotation = () => setIsRotating(false);
+        map.current.on('mousedown', stopRotation);
+        map.current.on('touchstart', stopRotation);
+
+        console.log('Map initialization completed');
+      } catch (error) {
+        console.error('Map initialization failed:', error);
+        setIsInitializing(false);
+        
+        // Retry initialization up to 3 times
+        if (initRetryCount < 3) {
+          console.log(`Retrying map initialization (attempt ${initRetryCount + 1})`);
+          setInitRetryCount(prev => prev + 1);
+          setTimeout(() => {
+            setContainerReady(false);
+            setTimeout(() => setContainerReady(true), 100);
+          }, 1000);
+        }
       }
     };
 
-    map.current.on('load', handleMapLoad);
-
-    // Add atmosphere for globe mode
-    if (mapStyle === 'globe') {
-      map.current.on('style.load', () => {
-        if (map.current) {
-          map.current.setFog({
-            color: 'rgb(186, 210, 235)',
-            'high-color': 'rgb(36, 92, 223)',
-            'horizon-blend': 0.02,
-          });
-        }
-      });
-    }
-
-    // Stop rotation on user interaction
-    const stopRotation = () => setIsRotating(false);
-    map.current.on('mousedown', stopRotation);
-    map.current.on('touchstart', stopRotation);
+    initializeMap();
 
     return () => {
-      map.current?.remove();
+      if (map.current) {
+        map.current.remove();
+        map.current = null;
+      }
       setMapLoaded(false);
       setMapDataLoaded(false);
+      setIsInitializing(false);
     };
-  }, [mapStyle, isMapboxConfigured]); // Removed isRotating from dependencies
+  }, [containerReady, mapStyle, isMapboxConfigured, initRetryCount]);
+
+  // Handle style changes for existing map
+  useEffect(() => {
+    if (!map.current || !mapLoaded || isInitializing) return;
+
+    console.log('Updating map style to:', mapStyle);
+    
+    const projection = mapStyle === 'globe' ? 'globe' : 'mercator';
+    const pitch = mapStyle === 'globe' ? DEFAULT_MAP_CONFIG.pitch : 0;
+    
+    map.current.easeTo({
+      pitch,
+      duration: 1000,
+    });
+
+    // Note: Projection changes require map recreation in Mapbox GL JS
+    // This is handled by the main initialization effect above
+  }, [mapStyle, mapLoaded, isInitializing]);
 
   // Separate useEffect to handle rotation
   useEffect(() => {
@@ -498,8 +599,28 @@ const MapboxHeatmap = React.forwardRef<HTMLDivElement, MapboxHeatmapProps>(({ se
       <Card className="overflow-hidden">
         <div 
           ref={mapContainer} 
-          className="w-full h-[700px] rounded-lg"
-        />
+          data-testid="map-container"
+          className="w-full h-[700px] rounded-lg relative"
+        >
+          {/* Loading overlay */}
+          {(!containerReady || isInitializing || !mapLoaded) && (
+            <div className="absolute inset-0 flex items-center justify-center bg-muted/50 backdrop-blur-sm z-10">
+              <div className="text-center">
+                <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-2"></div>
+                <p className="text-muted-foreground text-sm">
+                  {!containerReady ? 'Preparing map container...' : 
+                   isInitializing ? 'Initializing map...' : 
+                   'Loading map data...'}
+                </p>
+                {initRetryCount > 0 && (
+                  <p className="text-muted-foreground text-xs mt-1">
+                    Retry attempt {initRetryCount}/3
+                  </p>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
       </Card>
 
       {/* Legend */}
