@@ -145,12 +145,15 @@ const MapboxHeatmap = React.forwardRef<HTMLDivElement, MapboxHeatmapProps>(({ se
     }
   }, [languages, selectedLanguages, mapLoaded]);
 
-  // Check container readiness with IntersectionObserver
+  // Check container readiness - simplified approach
   useEffect(() => {
-    if (!mapContainer.current || !isMapboxConfigured) return;
+    if (!isMapboxConfigured) return;
 
     const checkContainerReadiness = () => {
-      if (!mapContainer.current) return false;
+      if (!mapContainer.current) {
+        console.log('Container check: element not found');
+        return false;
+      }
       
       const rect = mapContainer.current.getBoundingClientRect();
       const isVisible = rect.width > 0 && rect.height > 0;
@@ -165,37 +168,34 @@ const MapboxHeatmap = React.forwardRef<HTMLDivElement, MapboxHeatmapProps>(({ se
       return isVisible;
     };
 
-    // Use IntersectionObserver to detect when container is visible
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting && checkContainerReadiness()) {
-            console.log('Container is ready and visible');
-            setContainerReady(true);
-            observer.disconnect();
-          }
-        });
-      },
-      { threshold: 0.1 }
-    );
-
-    // Start observing immediately
-    if (mapContainer.current) {
-      observer.observe(mapContainer.current);
+    // Immediate check
+    if (checkContainerReadiness()) {
+      console.log('Container ready immediately');
+      setContainerReady(true);
+      return;
     }
 
-    // Fallback: Check readiness after a delay
-    const fallbackTimer = setTimeout(() => {
+    // Fallback timer with multiple attempts
+    let attemptCount = 0;
+    const maxAttempts = 10;
+    
+    const checkTimer = setInterval(() => {
+      attemptCount++;
+      console.log(`Container readiness attempt ${attemptCount}/${maxAttempts}`);
+      
       if (checkContainerReadiness()) {
-        console.log('Container ready via fallback check');
+        console.log('Container ready via timer check');
         setContainerReady(true);
-        observer.disconnect();
+        clearInterval(checkTimer);
+      } else if (attemptCount >= maxAttempts) {
+        console.warn('Container readiness check failed after max attempts, forcing ready state');
+        setContainerReady(true);
+        clearInterval(checkTimer);
       }
     }, 100);
 
     return () => {
-      observer.disconnect();
-      clearTimeout(fallbackTimer);
+      clearInterval(checkTimer);
     };
   }, [isMapboxConfigured]);
 
