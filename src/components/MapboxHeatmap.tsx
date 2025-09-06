@@ -581,7 +581,7 @@ const MapboxHeatmap = React.forwardRef<HTMLDivElement, MapboxHeatmapProps>(({ se
             className="gap-2"
           >
             {mapStyle === 'globe' ? <Map className="w-4 h-4" /> : <Globe className="w-4 h-4" />}
-            {mapStyle === 'globe' ? '2D Map' : '3D Globe'}
+            {mapStyle === 'globe' ? 'Toggle 2D Map' : 'Toggle 3D Globe'}
           </Button>
           <Button
             variant="outline"
