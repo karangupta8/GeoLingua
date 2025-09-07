@@ -2,7 +2,7 @@
 
 **GeoLingua** is an interactive multi-lingual web platform that visualizes the global reach of languages. The app helps users understand how many people they can communicate with globally based on the languages they know.
 
-### The Project also serves as my playground for vibe coding and agentic coding experiments
+> The Project also serves as my playground for vibe coding and agentic coding experiments
 
 ## 🔍 Overview
 
