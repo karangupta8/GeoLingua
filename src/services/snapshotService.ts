@@ -263,7 +263,7 @@ class SnapshotService {
       // Try to get language name from the DOM or use the ID
       const element = document.querySelector(`[data-language-id="${id}"]`);
       if (element) {
-        return element.textContent?.toLowerCase().replace(/\s+/g, '-') || id;
+        return element.textContent?.trim().toLowerCase().replace(/\s+/g, '-') || id;
       }
       return id;
     });
