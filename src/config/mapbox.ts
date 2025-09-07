@@ -12,8 +12,8 @@ export const MAPBOX_STYLES = {
 
 // Default map settings
 export const DEFAULT_MAP_CONFIG = {
-  center: [0, 30] as [number, number], // Optimal center for visual balance showing Europe, Africa, and Asia
-  zoom: 1.8,
+  center: [0, 0] as [number, number], // Center of the globe
+  zoom: 0.5,
   pitch: 25,
   bearing: 0,
   projection: 'globe' as const,
